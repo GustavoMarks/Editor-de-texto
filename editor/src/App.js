@@ -1,4 +1,5 @@
 import React from 'react';
+import Editor from './components/Editor/Editor';
 
 class App extends React.Component {
   //state indicará tela a ser renderizada
@@ -35,7 +36,10 @@ class App extends React.Component {
     } else {
       return(
         <div>
-          editor...
+          <h1>editor...</h1>
+
+          <Editor/>
+
           <button onClick={() => this.changeScreen(1)}>
             voltar
           </button>

@@ -16,12 +16,9 @@ class Editor extends Component {
     sandBox = () =>{
 
         let editor = document.getElementById("editor");
-        document.execCommand("heading", null, "h1");
-
         console.log(editor.innerHTML);
         console.log(this.state.urls)
-        //console.log(window.getSelection().getRangeAt(0));
-
+        //console.log(window.getSelection().getRangeAt(0))
     }
 
     //Função para manipular a fomatação html do campo de edição
@@ -58,6 +55,32 @@ class Editor extends Component {
             );
 
             this.setState({inputField: content});
+        } else if (type === "video"){
+            let content = (
+                <div>
+                    <label htmlFor="url-input">YouTube URL:</label>
+                    <input id="url-input" type="text" onChange={this.urlInput} value={this.setState.urls}/>
+
+                    <button onClick={() => this.addVideo()}>Salvar</button>
+                    <button onClick={() => this.setState({inputField: null})}>Cancelar</button>
+                </div>
+            );
+
+            this.setState({inputField: content});
+        }
+    }
+
+    //Função para adição de vídeo por ifram com link externo
+    addVideo = () => {
+        if(this.state.urls !== " "){
+            let iframe = document.createElement("iframe");
+            iframe.type = "text/html";
+            iframe.height = "360";
+            iframe.width = "80%";
+            iframe.src= "https://www.youtube.com/embed/M7lc1UVf-VE?autoplay=0&origin="+this.state.urls;
+
+            let range = window.getSelection().getRangeAt(0);
+            range.insertNode(iframe);
         }
     }
 
@@ -78,7 +101,7 @@ class Editor extends Component {
                     <button onClick={() => this.format("insertOrderedList")}>lista ordenada</button>
                     <button onClick={() => this.format("insertUnorderedList")}>lista não ordenada</button>
                     <button>imagem</button>
-                    <button>vídeo</button>
+                    <button onClick={() => this.changeInputField("video")}>vídeo</button>
                     <button onClick={() => this.changeInputField("link")}>link</button>
                     <button onClick={() => this.format("unlink")}>remover link</button>
                     <button onClick={() => this.format("undo")}>desfazer</button>

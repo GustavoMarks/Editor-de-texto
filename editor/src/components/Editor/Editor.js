@@ -2,22 +2,63 @@ import React, { Component } from 'react';
 
 class Editor extends Component {
 
+    /*
+        State:
+            - inputField: guarda campo dinâmico para inputs
+            - urls: guarda inputs de url
+    */
+
+    state = {
+        inputField: null,
+        urls: "",
+    }
+
     sandBox = () =>{
 
         let editor = document.getElementById("editor");
         document.execCommand("heading", null, "h1");
 
         console.log(editor.innerHTML);
+        console.log(this.state.urls)
         //console.log(window.getSelection().getRangeAt(0));
 
     }
 
+    //Função para manipular a fomatação html do campo de edição
     format = (commmand) =>{
         document.execCommand(commmand);
     }
 
+    //Função para atribuir títulos html para trechos de texto no campo de edição
     titles = (width) =>{
         document.execCommand("heading", null, width);
+    }
+
+    //Função para atribuir hiperlink para texto
+    linking = () =>{
+        document.execCommand('CreateLink', false, this.state.urls);
+    }
+
+    //Função para controle de campos de inputs
+    urlInput = (e) =>{
+        this.setState({urls: e.target.value})
+    }
+
+    //Função para configurar campo de inputs para link, imagem ou vídeo
+    changeInputField = (type) =>{
+        if(type === "link"){
+            let content = (
+                <div>
+                    <label htmlFor="url-input">URL:</label>
+                    <input id="url-input" type="text" onChange={this.urlInput} value={this.setState.urls}/>
+
+                    <button onClick={() => this.linking()}>Salvar</button>
+                    <button onClick={() => this.setState({inputField: null})}>Cancelar</button>
+                </div>
+            );
+
+            this.setState({inputField: content});
+        }
     }
 
     render(){
@@ -38,12 +79,19 @@ class Editor extends Component {
                     <button onClick={() => this.format("insertUnorderedList")}>lista não ordenada</button>
                     <button>imagem</button>
                     <button>vídeo</button>
-                    <button>link</button>
+                    <button onClick={() => this.changeInputField("link")}>link</button>
+                    <button onClick={() => this.format("unlink")}>remover link</button>
                     <button onClick={() => this.format("undo")}>desfazer</button>
                     <button onClick={() => this.format("redo")}>refazer</button>
                 </div>
 
-                <div contentEditable="true" designmode="on" id="editor" spellCheck="true"> digite aqui... </div>
+                {
+                    this.state.inputField
+                }
+
+                <div contentEditable="true" designmode="on" id="editor" spellCheck="true"> 
+                    digite aqui...
+                </div>
 
                 <button onClick={() => this.sandBox()}>sandBox</button>
             </div>

@@ -6,18 +6,22 @@ class Editor extends Component {
         State:
             - inputField: guarda campo dinâmico para inputs
             - urls: guarda inputs de url
+            - imageWidth: guarda valores (%) para dimensão de largura de imagem a ser inserida (default 50)
+            - imageHeight: guarda valores (%) para dimensão de altura de imagem a ser inserida (default 50)
     */
 
     state = {
         inputField: null,
         urls: "",
+        imageWidth: 50,
+        imageHeight: 50,
     }
 
     sandBox = () =>{
 
         let editor = document.getElementById("editor");
         console.log(editor.innerHTML);
-        console.log(this.state.urls)
+        console.log(this.state)
         //console.log(window.getSelection().getRangeAt(0))
     }
 
@@ -37,17 +41,19 @@ class Editor extends Component {
     }
 
     //Função para controle de campos de inputs
-    urlInput = (e) =>{
-        this.setState({urls: e.target.value})
+    inputs = (e) =>{
+        this.setState({[e.target.name]: e.target.value})
     }
 
     //Função para configurar campo de inputs para link, imagem ou vídeo
     changeInputField = (type) =>{
+        //Caso em que botão de link foi clicado
         if(type === "link"){
+            //Gerando campo com inputs e salvando no state para renderização
             let content = (
                 <div>
                     <label htmlFor="url-input">URL:</label>
-                    <input id="url-input" type="text" onChange={this.urlInput} value={this.setState.urls}/>
+                    <input name="urls" id="url-input" type="text" onChange={this.inputs} value={this.setState.urls}/>
 
                     <button onClick={() => this.linking()}>Salvar</button>
                     <button onClick={() => this.setState({inputField: null})}>Cancelar</button>
@@ -56,12 +62,46 @@ class Editor extends Component {
 
             this.setState({inputField: content});
         } else if (type === "video"){
+            //Caso em que botão de video foi clicado
+            //Gerando campo com inputs e salvando no state para renderização
             let content = (
                 <div>
                     <label htmlFor="url-input">YouTube URL:</label>
-                    <input id="url-input" type="text" onChange={this.urlInput} value={this.setState.urls}/>
+                    <input name="urls" id="url-input" type="text" onChange={this.inputs} value={this.setState.urls}/>
 
                     <button onClick={() => this.addVideo()}>Salvar</button>
+                    <button onClick={() => this.setState({inputField: null})}>Cancelar</button>
+                </div>
+            );
+
+            this.setState({inputField: content});
+        } else if (type === "image"){
+            //Caso em que botão de imagem foi clicado
+            //Gerando campo com seleção para imagem por url ou uplad
+            let content = (
+                <div>   
+                    <button onClick={() => this.changeInputField("urlImage")}>Imagem url</button>
+                    <button onClick={() => this.changeInputField("uploadImage")}>Imagem upload</button>
+                    <button onClick={() => this.setState({inputField: null})}>Cancelar</button>
+                </div>
+            );
+
+            this.setState({inputField: content});
+        } else if (type === "urlImage"){
+            //Caso em que subopção de imagem por url foi escolhida
+            //Gerando campo com inputs e salvando no state para renderização
+            let content = (
+                <div>
+                    <label htmlFor="url-input">URL:</label>
+                    <input name="urls" id="url-input" type="text" onChange={this.inputs} value={this.setState.urls}/>
+
+                    <label htmlFor="width-input">Lagura:</label>
+                    <input name="imageWidth" id="width-input" type="number" onChange={this.inputs} value={this.setState.imageWidth}/>
+
+                    <label htmlFor="height-input">Altura:</label>
+                    <input name="imageHeight" id="height-input" type="number" onChange={this.inputs} value={this.setState.imageHeight}/>
+
+                    <button onClick={() => this.addUrlImage()}>Salvar</button>
                     <button onClick={() => this.setState({inputField: null})}>Cancelar</button>
                 </div>
             );
@@ -84,6 +124,19 @@ class Editor extends Component {
         }
     }
 
+    //Função para adicionar imagem por url
+    addUrlImage = () => {
+        if(this.state.urls !== " "){
+            let img = document.createElement("img");
+            img.src = this.state.urls;
+            img.style.width = this.state.imageWidth + "%";
+            img.style.height = this.state.imageHeight + "%";
+
+            let range = window.getSelection().getRangeAt(0);
+            range.insertNode(img);
+        }
+    }
+
     render(){
         return(
             <div>
@@ -100,7 +153,7 @@ class Editor extends Component {
                     <button onClick={() => this.format("justifyRight")}>direita</button>
                     <button onClick={() => this.format("insertOrderedList")}>lista ordenada</button>
                     <button onClick={() => this.format("insertUnorderedList")}>lista não ordenada</button>
-                    <button>imagem</button>
+                    <button onClick={() => this.changeInputField("image")}>imagem</button>
                     <button onClick={() => this.changeInputField("video")}>vídeo</button>
                     <button onClick={() => this.changeInputField("link")}>link</button>
                     <button onClick={() => this.format("unlink")}>remover link</button>

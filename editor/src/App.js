@@ -1,22 +1,7 @@
 import React from 'react';
 import Editor from './components/Editor/Editor';
-import firebase from 'firebase';
-
-
-  //Configurações do Firebase
-  const firebaseConfig = {
-    apiKey: "AIzaSyCfdqlHhSRQCyVH9V7FZWXgFDbqVbYcVpQ",
-    authDomain: "editor-wysiwyg.firebaseapp.com",
-    databaseURL: "https://editor-wysiwyg.firebaseio.com",
-    projectId: "editor-wysiwyg",
-    storageBucket: "",
-    messagingSenderId: "666152057237",
-    appId: "1:666152057237:web:44dda3b851498c75"
-  };
-
-  // Inicializando firebase
-  firebase.initializeApp(firebaseConfig);
-
+import firebase from 'firebase/app';
+import "firebase/firebase-storage";
 
 class App extends React.Component {
   //state indicará tela a ser renderizada
@@ -24,13 +9,51 @@ class App extends React.Component {
     screen: 1
   }
 
+  //Função para mudanção da tela
   changeScreen = (screen) =>{
     this.setState({screen: screen});
+  }
+
+  //Função para post de imagem (com firebase para testes)
+  postImge = (img, key, callBack) => {
+    console.log("init upload file...")
+
+    //Postando arquivo
+    firebase.storage().ref("imgs/"+key).put(img).on('state_changed',
+        (snapshot) => {
+
+          //Porcentagem de carregamento do arquivo para o servidor
+          let percent = (snapshot.bytesTransferred/snapshot.totalBytes) * 100;
+          console.log("Uploaded in " + percent.toFixed(0) + "%");
+        },
+
+        (err) => {
+
+          //Caso de erro para fazer postagem
+          console.log(err)
+          return null
+        },
+
+        () => {
+
+          //Buscando referência da imagem no servidor firebase
+          console.log("init call...");
+          firebase.storage().ref("imgs/"+key).getDownloadURL().then((url) => {
+            //Caso de sucesso, passando url para callBack que cria elemento img no editor
+            callBack(url);
+
+          }).catch((error) => {
+            //Caso de erro para obter referência
+            console.log(error);
+          });
+        }
+      );
   }
 
   render() {
 
     if(this.state.screen === 1){
+      //Retornando tela default com caminho para outras telas
         return (
         <div>
           <button onClick={() => this.changeScreen(2)}>
@@ -42,6 +65,7 @@ class App extends React.Component {
         </div>
       );
     } else if (this.state.screen === 2){
+      //Retornarndo tela com lista de postagens do servidor
       return(
         <div>
           postagens...
@@ -51,11 +75,12 @@ class App extends React.Component {
         </div>
       )
     } else {
+      //Retornando área de edição de texto
       return(
         <div>
           <h1>editor...</h1>
 
-          <Editor/>
+          <Editor postImg={this.postImge} getImg={this.getImage}/>
 
           <button onClick={() => this.changeScreen(1)}>
             voltar

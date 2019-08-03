@@ -15,6 +15,7 @@ class Editor extends Component {
         urls: "",
         imageWidth: 20,
         imageHeight: 20,
+        imageFile: null,
     }
 
     sandBox = () =>{
@@ -42,7 +43,14 @@ class Editor extends Component {
 
     //Função para controle de campos de inputs
     inputs = (e) =>{
-        this.setState({[e.target.name]: e.target.value})
+
+        //Caso de upload de arquivo
+        if(e.target.files[0]){
+            this.setState({[e.target.name]: e.target.files[0]})
+        } else {
+            this.setState({[e.target.name]: e.target.value})
+        }
+        
     }
 
     //Função para configurar campo de inputs para link, imagem ou vídeo
@@ -107,6 +115,26 @@ class Editor extends Component {
             );
 
             this.setState({inputField: content});
+        } else if (type === "uploadImage"){
+            //Caso em que subopção de imagem por upload foi escolhida
+            //Gerando campo com inputs e salvando no state para renderização
+            let content = (
+                <div>
+                    <label htmlFor="upload-input">Escolha um aquivo no computador:</label>
+                    <input id="upload-input" type="file" accept="image/x-png,image/gif,image/jpeg" name="imageFile" onChange={this.inputs}/>
+
+                    <label htmlFor="width-input">Lagura:</label>
+                    <input name="imageWidth" id="width-input" type="number" onChange={this.inputs} value={this.setState.imageWidth}/>
+
+                    <label htmlFor="height-input">Altura:</label>
+                    <input name="imageHeight" id="height-input" type="number" onChange={this.inputs} value={this.setState.imageHeight}/>
+
+                    <button onClick={() => this.addUploadImage()}>Salvar</button>
+                    <button onClick={() => this.setState({inputField: null})}>Cancelar</button>
+                </div>
+            );
+
+            this.setState({inputField: content});
         }
     }
 
@@ -126,9 +154,28 @@ class Editor extends Component {
 
     //Função para adicionar imagem por url
     addUrlImage = () => {
-        if(this.state.urls !== " "){
+        this.createImage(this.state.urls);
+    }
+
+    //Função para adicionar imagem por upload
+    addUploadImage = async () => {
+        //Recebendo aquivo do input
+        if(this.state.imageFile){
+            //Gerando key para o arquivo
+            let key = new Date().getTime();
+
+            //Enviando imagem, key e callback para gerar imagem
+            this.props.postImg(this.state.imageFile, key, this.createImage);
+
+        }
+    }
+
+    //Função para criar um elemento img no campo de edição
+    createImage = (url) => {
+        console.log("creating image")
+        if(url){
             let img = document.createElement("img");
-            img.src = this.state.urls;
+            img.src = url;
             img.style.width = this.state.imageWidth + "%";
             img.style.height = this.state.imageHeight + "%";
 

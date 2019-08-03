@@ -6,15 +6,15 @@ class Editor extends Component {
         State:
             - inputField: guarda campo dinâmico para inputs
             - urls: guarda inputs de url
-            - imageWidth: guarda valores (%) para dimensão de largura de imagem a ser inserida (default 50)
-            - imageHeight: guarda valores (%) para dimensão de altura de imagem a ser inserida (default 50)
+            - imageWidth: guarda valores (%) para dimensão de largura de imagem a ser inserida (default 20)
+            - imageHeight: guarda valores (%) para dimensão de altura de imagem a ser inserida (default 20)
     */
 
     state = {
         inputField: null,
         urls: "",
-        imageWidth: 50,
-        imageHeight: 50,
+        imageWidth: 20,
+        imageHeight: 20,
     }
 
     sandBox = () =>{

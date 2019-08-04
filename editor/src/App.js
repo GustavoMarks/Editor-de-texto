@@ -2,6 +2,7 @@ import React from 'react';
 import Editor from './components/Editor/Editor';
 import firebase from 'firebase/app';
 import "firebase/firebase-storage";
+import "firebase/firebase-database";
 
 class App extends React.Component {
   //state indicará tela a ser renderizada
@@ -50,6 +51,23 @@ class App extends React.Component {
       );
   }
 
+  //Função de saída do texto html (usando firebase para testes)
+  postHtml = (html, title) => {
+    firebase.database().ref("posts/"+title).set({
+      title: title,
+      text: html,
+    },
+
+    (error) =>{
+      if(error){
+        console.log(error)
+        console.log("Post fail...");
+      } else {
+        console.log("Successfully saved!")
+      }
+    })
+  }
+
   render() {
 
     if(this.state.screen === 1){
@@ -80,7 +98,7 @@ class App extends React.Component {
         <div>
           <h1>editor...</h1>
 
-          <Editor postImg={this.postImge} getImg={this.getImage}/>
+          <Editor postImg={this.postImge} post={this.postHtml} defaultText="Digite aqui..."/>
 
           <button onClick={() => this.changeScreen(1)}>
             voltar

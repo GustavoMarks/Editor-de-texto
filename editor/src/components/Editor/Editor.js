@@ -8,6 +8,8 @@ class Editor extends Component {
             - urls: guarda inputs de url
             - imageWidth: guarda valores (%) para dimensão de largura de imagem a ser inserida (default 20)
             - imageHeight: guarda valores (%) para dimensão de altura de imagem a ser inserida (default 20)
+            - imageFile: guarda arquivo de imagem para upload
+            - title: guarda valor de titulo para post da publicação (default titulo-{numero randomico})
     */
 
     state = {
@@ -16,6 +18,7 @@ class Editor extends Component {
         imageWidth: 20,
         imageHeight: 20,
         imageFile: null,
+        title: "titulo-" + new Date().getTime(),
     }
 
     sandBox = () =>{
@@ -43,11 +46,13 @@ class Editor extends Component {
 
     //Função para controle de campos de inputs
     inputs = (e) =>{
-
-        //Caso de upload de arquivo
         if(e.target.files[0]){
+            //Caso de input de imagem 
             this.setState({[e.target.name]: e.target.files[0]})
-        } else {
+        }
+        
+        else {
+            //Inputs comuns
             this.setState({[e.target.name]: e.target.value})
         }
         
@@ -69,7 +74,9 @@ class Editor extends Component {
             );
 
             this.setState({inputField: content});
-        } else if (type === "video"){
+        }
+        
+        else if (type === "video"){
             //Caso em que botão de video foi clicado
             //Gerando campo com inputs e salvando no state para renderização
             let content = (
@@ -83,7 +90,9 @@ class Editor extends Component {
             );
 
             this.setState({inputField: content});
-        } else if (type === "image"){
+        }
+        
+        else if (type === "image"){
             //Caso em que botão de imagem foi clicado
             //Gerando campo com seleção para imagem por url ou uplad
             let content = (
@@ -95,7 +104,9 @@ class Editor extends Component {
             );
 
             this.setState({inputField: content});
-        } else if (type === "urlImage"){
+        }
+        
+        else if (type === "urlImage"){
             //Caso em que subopção de imagem por url foi escolhida
             //Gerando campo com inputs e salvando no state para renderização
             let content = (
@@ -115,7 +126,9 @@ class Editor extends Component {
             );
 
             this.setState({inputField: content});
-        } else if (type === "uploadImage"){
+        }
+        
+        else if (type === "uploadImage"){
             //Caso em que subopção de imagem por upload foi escolhida
             //Gerando campo com inputs e salvando no state para renderização
             let content = (
@@ -130,6 +143,22 @@ class Editor extends Component {
                     <input name="imageHeight" id="height-input" type="number" onChange={this.inputs} value={this.setState.imageHeight}/>
 
                     <button onClick={() => this.addUploadImage()}>Salvar</button>
+                    <button onClick={() => this.setState({inputField: null})}>Cancelar</button>
+                </div>
+            );
+
+            this.setState({inputField: content});
+        }
+
+        else if(type === "html"){
+            //Caso em que post é chamado
+            //Gerando campo com input para título da publicação
+            let content = (
+                <div>
+                    <label htmlFor="title-input">Título:</label>
+                    <input name="title" id="title-input" type="text" onChange={this.inputs} value={this.setState.title}/>
+
+                    <button onClick={() => this.post()}>Salvar</button>
                     <button onClick={() => this.setState({inputField: null})}>Cancelar</button>
                 </div>
             );
@@ -184,6 +213,15 @@ class Editor extends Component {
         }
     }
 
+    //Função para publicação do texto no campo de edição
+    post = () => {
+        //Salvando HTML de saida
+        let exitHtml = document.getElementById("editor").innerHTML;
+
+        //Enviando para servidor por props
+        this.props.post(exitHtml, this.state.title);
+    }
+
     render(){
         return(
             <div>
@@ -213,9 +251,12 @@ class Editor extends Component {
                 }
 
                 <div contentEditable="true" designmode="on" id="editor" spellCheck="true"> 
-                    digite aqui...
+                    {
+                        this.props.defaultText    
+                    }
                 </div>
 
+                <button onClick={() => this.changeInputField("html")}>Publicar</button>
                 <button onClick={() => this.sandBox()}>sandBox</button>
             </div>
         )

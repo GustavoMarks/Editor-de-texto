@@ -1,18 +1,29 @@
 import React from 'react';
 import Editor from './components/Editor/Editor';
+import PostsList from './components/PostsList/PostsList';
+import Post from './components/PostsList/Post';
 import firebase from 'firebase/app';
 import "firebase/firebase-storage";
 import "firebase/firebase-database";
 
 class App extends React.Component {
-  //state indicará tela a ser renderizada
+  //state indicará tela a ser renderizada, post guardará um objeto para renderizaração
   state = {
-    screen: 1
+    screen: 1,
+    post: {},
   }
 
   //Função para mudanção da tela
   changeScreen = (screen) =>{
     this.setState({screen: screen});
+  }
+
+  //Função para leitura de post
+  renderPost = (data) => {
+    this.setState({
+      screen: 4,
+      post: data
+    })
   }
 
   //Função para post de imagem (com firebase para testes)
@@ -68,6 +79,28 @@ class App extends React.Component {
     })
   }
 
+  //Função para update de deleção de post (usando firebase para testes)
+  updateHtml = (key, newData) => {
+    console.log(key);
+    firebase.database().ref("posts/"+key).update({newData}).then(
+      
+      () => {
+        console.log("Update Successfull!");
+      }
+      
+      ).catch(
+        
+      (error) =>{
+        console.log(error)
+    })
+  }
+
+  removeHtml = (key) => {
+    firebase.database().ref("posts/"+key).remove().then(() => {
+      console.log("Post removed!");
+    })
+  }
+
   render() {
 
     if(this.state.screen === 1){
@@ -86,13 +119,13 @@ class App extends React.Component {
       //Retornarndo tela com lista de postagens do servidor
       return(
         <div>
-          postagens...
+          <PostsList renderPost={this.renderPost} removeData={this.removeHtml}/>
           <button onClick={() => this.changeScreen(1)}>
             voltar
           </button>
         </div>
       )
-    } else {
+    } else if (this.state.screen === 3){
       //Retornando área de edição de texto
       return(
         <div>
@@ -103,6 +136,17 @@ class App extends React.Component {
           <button onClick={() => this.changeScreen(1)}>
             voltar
           </button>
+        </div>
+      )
+    } else {
+      //Retorando área de visualização de postagem
+      return(
+        <div>
+          <Post data={this.state.post}/>
+          <button onClick={() => this.changeScreen(1)}>
+            voltar
+          </button>
+
         </div>
       )
     }

@@ -21,14 +21,6 @@ class Editor extends Component {
         title: "titulo-" + new Date().getTime(),
     }
 
-    sandBox = () =>{
-
-        let editor = document.getElementById("editor");
-        console.log(editor.innerHTML);
-        console.log(this.state)
-        //console.log(window.getSelection().getRangeAt(0))
-    }
-
     //Função para manipular a fomatação html do campo de edição
     format = (commmand) =>{
         document.execCommand(commmand);
@@ -46,7 +38,7 @@ class Editor extends Component {
 
     //Função para controle de campos de inputs
     inputs = (e) =>{
-        if(e.target.files[0]){
+        if(e.target.files){
             //Caso de input de imagem 
             this.setState({[e.target.name]: e.target.files[0]})
         }
@@ -257,7 +249,6 @@ class Editor extends Component {
                 </div>
 
                 <button onClick={() => this.changeInputField("html")}>Publicar</button>
-                <button onClick={() => this.sandBox()}>sandBox</button>
             </div>
         )
     }

@@ -79,19 +79,11 @@ class App extends React.Component {
     })
   }
 
-  //Função para update de deleção de post (usando firebase para testes)
-  updateHtml = (key, newData) => {
-    console.log(key);
-    firebase.database().ref("posts/"+key).update({newData}).then(
-      
-      () => {
-        console.log("Update Successfull!");
-      }
-      
-      ).catch(
-        
-      (error) =>{
-        console.log(error)
+  //Função para update de post (usando firebase para testes)
+  updateHtml = (newData) => {
+    this.setState({
+      post: newData,
+      screen: 5
     })
   }
 
@@ -119,7 +111,7 @@ class App extends React.Component {
       //Retornarndo tela com lista de postagens do servidor
       return(
         <div>
-          <PostsList renderPost={this.renderPost} removeData={this.removeHtml}/>
+          <PostsList renderPost={this.renderPost} removeData={this.removeHtml} update={this.updateHtml}/>
           <button onClick={() => this.changeScreen(1)}>
             voltar
           </button>
@@ -138,11 +130,32 @@ class App extends React.Component {
           </button>
         </div>
       )
-    } else {
+    } else if (this.state.screen === 4){
       //Retorando área de visualização de postagem
       return(
         <div>
           <Post data={this.state.post}/>
+          <button onClick={() => this.changeScreen(1)}>
+            voltar
+          </button>
+
+        </div>
+      )
+    } else if(this.state.screen === 5){
+      //Campo de edição para update de uma postagem
+      return(
+        <div>
+          
+          <h1>Atualizando {this.state.post.title}</h1>
+
+          <Editor
+            updatig
+            title={this.state.post.title}
+            postImg={this.postImge}
+            post={this.postHtml}
+            defaultText={this.state.post.text}
+          />
+          
           <button onClick={() => this.changeScreen(1)}>
             voltar
           </button>

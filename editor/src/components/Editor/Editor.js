@@ -18,7 +18,7 @@ class Editor extends Component {
         imageWidth: 20,
         imageHeight: 20,
         imageFile: null,
-        title: "titulo-" + new Date().getTime(),
+        title: this.props.updatig ? this.props.title : "titulo-" + new Date().getTime(),
     }
 
     //Função para manipular a fomatação html do campo de edição
@@ -58,7 +58,7 @@ class Editor extends Component {
             let content = (
                 <div>
                     <label htmlFor="url-input">URL:</label>
-                    <input name="urls" id="url-input" type="text" onChange={this.inputs} value={this.setState.urls}/>
+                    <input name="urls" id="url-input" type="text" defaultValue={this.state.urls} onChange={this.inputs} />
 
                     <button onClick={() => this.linking()}>Salvar</button>
                     <button onClick={() => this.setState({inputField: null})}>Cancelar</button>
@@ -74,7 +74,7 @@ class Editor extends Component {
             let content = (
                 <div>
                     <label htmlFor="url-input">YouTube URL:</label>
-                    <input name="urls" id="url-input" type="text" onChange={this.inputs} value={this.setState.urls}/>
+                    <input name="urls" id="url-input" type="text" onChange={this.inputs} defaultValue={this.state.urls}/>
 
                     <button onClick={() => this.addVideo()}>Salvar</button>
                     <button onClick={() => this.setState({inputField: null})}>Cancelar</button>
@@ -104,13 +104,13 @@ class Editor extends Component {
             let content = (
                 <div>
                     <label htmlFor="url-input">URL:</label>
-                    <input name="urls" id="url-input" type="text" onChange={this.inputs} value={this.setState.urls}/>
+                    <input contenteditable name="urls" id="url-input" type="text" onChange={this.inputs} defaultValue={this.state.urls}/>
 
                     <label htmlFor="width-input">Lagura:</label>
-                    <input name="imageWidth" id="width-input" type="number" onChange={this.inputs} value={this.setState.imageWidth}/>
+                    <input name="imageWidth" id="width-input" type="number" onChange={this.inputs} defaultValue={this.state.imageWidth}/>
 
                     <label htmlFor="height-input">Altura:</label>
-                    <input name="imageHeight" id="height-input" type="number" onChange={this.inputs} value={this.setState.imageHeight}/>
+                    <input name="imageHeight" id="height-input" type="number" onChange={this.inputs} defaultValue={this.state.imageHeight}/>
 
                     <button onClick={() => this.addUrlImage()}>Salvar</button>
                     <button onClick={() => this.setState({inputField: null})}>Cancelar</button>
@@ -129,10 +129,10 @@ class Editor extends Component {
                     <input id="upload-input" type="file" accept="image/x-png,image/gif,image/jpeg" name="imageFile" onChange={this.inputs}/>
 
                     <label htmlFor="width-input">Lagura:</label>
-                    <input name="imageWidth" id="width-input" type="number" onChange={this.inputs} value={this.setState.imageWidth}/>
+                    <input name="imageWidth" id="width-input" type="number" onChange={this.inputs} defaultValue={this.state.imageWidth}/>
 
                     <label htmlFor="height-input">Altura:</label>
-                    <input name="imageHeight" id="height-input" type="number" onChange={this.inputs} value={this.setState.imageHeight}/>
+                    <input name="imageHeight" id="height-input" type="number" onChange={this.inputs} defaultValue={this.state.imageHeight}/>
 
                     <button onClick={() => this.addUploadImage()}>Salvar</button>
                     <button onClick={() => this.setState({inputField: null})}>Cancelar</button>
@@ -148,7 +148,7 @@ class Editor extends Component {
             let content = (
                 <div>
                     <label htmlFor="title-input">Título:</label>
-                    <input name="title" id="title-input" type="text" onChange={this.inputs} value={this.setState.title}/>
+                    <input name="title" id="title-input" type="text" onChange={this.inputs} defaultValue={this.state.title}/>
 
                     <button onClick={() => this.post()}>Salvar</button>
                     <button onClick={() => this.setState({inputField: null})}>Cancelar</button>
@@ -214,6 +214,11 @@ class Editor extends Component {
         this.props.post(exitHtml, this.state.title);
     }
 
+    componentDidMount(){
+        let editor = document.getElementById("editor");
+        editor.innerHTML = this.props.defaultText;
+    }
+
     render(){
         return(
             <div>
@@ -243,15 +248,15 @@ class Editor extends Component {
                 }
 
                 <div contentEditable="true" designmode="on" id="editor" spellCheck="true"> 
-                    {
-                        this.props.defaultText    
-                    }
+                    Carregando...
                 </div>
 
                 <button onClick={() => this.changeInputField("html")}>Publicar</button>
             </div>
         )
     }
+
+    
 
 }
 

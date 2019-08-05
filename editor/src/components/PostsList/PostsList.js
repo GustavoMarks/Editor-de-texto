@@ -14,7 +14,6 @@ class PostsList extends Component{
         let newList = [];
 
         firebase.database().ref("posts/").on('value', (snapshot) => {
-            console.log(snapshot);
 
             snapshot.forEach((post) =>{
                 newList.push(post.val());
@@ -39,12 +38,12 @@ class PostsList extends Component{
                         <li key={post.title}>
                             {post.title} /
                             <button onClick={() => this.props.renderPost(post)}>ver</button>
-                            <button >editar</button>
+                            <button onClick={() => this.props.update(post)}>editar</button>
                             <button onClick={() => this.props.removeData(post.title)}>excluir</button> 
                         </li>)
                     })
 
-                    : "carregando..."
+                    : "nenhuma postagem no momento..."
                 }
             </ul>
         )

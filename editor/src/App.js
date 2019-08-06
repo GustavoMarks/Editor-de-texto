@@ -87,10 +87,20 @@ class App extends React.Component {
     })
   }
 
+  //Função de deleção de postagem
   removeHtml = (key) => {
     firebase.database().ref("posts/"+key).remove().then(() => {
       console.log("Post removed!");
     })
+  }
+
+  //Funções para estilização dinâmica com hover
+  hoverOnEnter = (e) =>{
+     e.target.style.backgroundColor = '#708090';
+  }
+
+  hoverOnLeave = (e) => {
+    e.target.style.backgroundColor = '#4682B4';
   }
 
   render() {
@@ -98,12 +108,21 @@ class App extends React.Component {
     if(this.state.screen === 1){
       //Retornando tela default com caminho para outras telas
         return (
-        <div>
-          <button onClick={() => this.changeScreen(2)}>
-            Postagens
+        <div style={style.content}>
+          <h1>EDITOR WYSIWYG</h1>
+          <button 
+            style={style.button}
+            onMouseEnter={this.hoverOnEnter}
+            onMouseLeave={this.hoverOnLeave}
+            onClick={() => this.changeScreen(2)}>
+            POSTAGENS
           </button>
-          <button onClick={() => this.changeScreen(3)}>
-            Nova publicação
+          <button 
+            style={style.button}
+            onMouseEnter={this.hoverOnEnter}
+            onMouseLeave={this.hoverOnLeave}
+            onClick={() => this.changeScreen(3)}>
+            NOVA PUBLICAÇÃO
           </button>
         </div>
       );
@@ -165,6 +184,36 @@ class App extends React.Component {
     }
     
   }
+}
+
+
+const style = {
+  content : {
+    display: 'flex',
+    flex: 1,
+    flexDirection: 'column',
+    backgroundColor: '#F8F8FF',
+    minHeight: '100vh',
+    justifyContent: 'center',
+    alignItems: 'center',
+    color: '#4682B4',
+  },
+
+  button : {
+    minWidth: '50%',
+    height: '40px',
+    border: 'none',
+    borderRadius: 10,
+    margin: '5px 0 5px 0',
+    backgroundColor: '#4682B4',
+    color:'#F8F8FF',
+    fontFamily: 'Arial Black',
+  },
+
+  hoverButton : {
+    backgroundColor: '#708090',
+  }
+
 }
 
 export default App;

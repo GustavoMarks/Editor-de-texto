@@ -28,7 +28,21 @@ class Editor extends Component {
 
     //Função para atribuir títulos html para trechos de texto no campo de edição
     titles = (width) =>{
-        document.execCommand("heading", null, width);
+        //Salvando intervalo selecionado
+        let range = window.getSelection().getRangeAt(0);
+
+        //Buscando nó atual do intervalo
+        let node = range.startContainer.parentElement;        
+
+        //Se intervalo já possui o título, tornar parágrafo
+        if(node.nodeName === width.toUpperCase()){   
+            document.execCommand("heading", null, "p");
+        }
+        //Se intervalo não possui o título, aplicar
+        else {
+            document.execCommand("heading", null, width);
+        }
+        
     }
 
     //Função para atribuir hiperlink para texto
@@ -166,7 +180,7 @@ class Editor extends Component {
             iframe.type = "text/html";
             iframe.height = "360";
             iframe.width = "80%";
-            iframe.src= "https://www.youtube.com/embed/M7lc1UVf-VE?autoplay=0&origin="+this.state.urls;
+            iframe.src= "https://www.youtube.com/embed/"+this.state.urls;
 
             let range = window.getSelection().getRangeAt(0);
             range.insertNode(iframe);
@@ -248,7 +262,7 @@ class Editor extends Component {
                 }
 
                 <div contentEditable="true" designmode="on" id="editor" spellCheck="true"> 
-                    Carregando...
+    
                 </div>
 
                 <button onClick={() => this.changeInputField("html")}>Publicar</button>

@@ -10,6 +10,25 @@ class Editor extends Component {
             - imageHeight: guarda valores (%) para dimensão de altura de imagem a ser inserida (default 20)
             - imageFile: guarda arquivo de imagem para upload
             - title: guarda valor de titulo para post da publicação (default titulo-{numero randomico})
+
+        Métodos:
+            - format: recebe uma string de comando para aplicar formatação via DOM (com função nativa)
+            - titles: recebe uma string com tamanho do título a ser aplicado e trata casos de formatação
+            - linking: aplica formtação de link com url do state
+            - inputs: recebe evento e manibula dados de inputs para o state
+            - changeInputField: recebe uma string que determina qual campo de input deve ser mostrado
+            - addVideo: gera iframe de video do youtube com url do state
+            - addUrlImage: gera imagem atráves de url do state
+            - addUploadImage: gera uma imagem por upload passando blob e chave do state, e callback para pai (backend)
+            - createImage (auxiliar): recebe string com url e gera img no campo de edição
+            - post: guarda o valor HTML do campo de edição e enviar para pai (backend)
+
+        props:
+            - updating: booleano, quando true, campo de edição recebe dados para update e seta saida para key existente
+            - title: titulo para postagem em update
+            - postImage: função de saída para upload de imagem
+            - post: função de saída para HTML de campo de edição
+            - defaultText: recebe texto default para campo de edição
     */
 
     state = {
@@ -193,7 +212,7 @@ class Editor extends Component {
     }
 
     //Função para adicionar imagem por upload
-    addUploadImage = async () => {
+    addUploadImage = () => {
         //Recebendo aquivo do input
         if(this.state.imageFile){
             //Gerando key para o arquivo

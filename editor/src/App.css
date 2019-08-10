@@ -24,3 +24,8 @@
 .content-button:hover{
   background-color: #708090;
 }
+
+.editor-view{
+  background-color: #DCDCDC;
+  height: 92vh;
+}

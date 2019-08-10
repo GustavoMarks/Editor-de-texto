@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import Toolbar from './Toolbar';
+import './Editor.css';
 
 class Editor extends Component {
 
@@ -254,37 +256,29 @@ class Editor extends Component {
 
     render(){
         return(
-            <div>
-                <div id="toolbar">
-                    <button onClick={() => this.titles("h2")}>titulo 1</button>
-                    <button onClick={() => this.titles("h3")}>titulo 2</button>
-                    <button onClick={() => this.titles("h4")}>titulo 3</button>
-                    <button onClick={() => this.format("bold")}>negrito</button>
-                    <button onClick={() => this.format("italic")}>italico</button>
-                    <button onClick={() => this.format("underline")}>sublinhado</button>
-                    <button onClick={() => this.format("justifyFull")}>justificado</button>
-                    <button onClick={() => this.format("justifyLeft")}>esquerda</button>
-                    <button onClick={() => this.format("justifyCenter")}>central</button>
-                    <button onClick={() => this.format("justifyRight")}>direita</button>
-                    <button onClick={() => this.format("insertOrderedList")}>lista ordenada</button>
-                    <button onClick={() => this.format("insertUnorderedList")}>lista não ordenada</button>
-                    <button onClick={() => this.changeInputField("image")}>imagem</button>
-                    <button onClick={() => this.changeInputField("video")}>vídeo</button>
-                    <button onClick={() => this.changeInputField("link")}>link</button>
-                    <button onClick={() => this.format("unlink")}>remover link</button>
-                    <button onClick={() => this.format("undo")}>desfazer</button>
-                    <button onClick={() => this.format("redo")}>refazer</button>
-                </div>
+            <div className="editor-content">
+
+                <Toolbar
+                    format={this.format}
+                    titles={this.titles}
+                    changeInputField={this.changeInputField}
+                />
 
                 {
                     this.state.inputField
                 }
 
-                <div contentEditable="true" designmode="on" id="editor" spellCheck="true"> 
+                <div className="editor-paper" contentEditable="true" designmode="on" id="editor" spellCheck="true"> 
     
                 </div>
 
-                <button onClick={() => this.changeInputField("html")}>Publicar</button>
+                <div className="controls-content">
+                    <button className="editor-button" onClick={() => this.changeInputField("html")}>SALVAR</button>
+
+                    <button className="editor-button" onClick={() => this.props.goBack(1)}>CANCELAR</button>
+                </div>
+
+                
             </div>
         )
     }

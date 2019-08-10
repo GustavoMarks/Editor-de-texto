@@ -123,14 +123,11 @@ class App extends React.Component {
     } else if (this.state.screen === 3){
       //Retornando área de edição de texto
       return(
-        <div>
+        <div className="editor-view">
           <h1>editor...</h1>
 
-          <Editor postImg={this.postImge} post={this.postHtml} defaultText="Digite aqui..."/>
+          <Editor postImg={this.postImge} post={this.postHtml} goBack={this.changeScreen} defaultText="Digite aqui..."/>
 
-          <button onClick={() => this.changeScreen(1)}>
-            voltar
-          </button>
         </div>
       )
     } else if (this.state.screen === 4){

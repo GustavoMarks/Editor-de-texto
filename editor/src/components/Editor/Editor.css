@@ -40,6 +40,11 @@
     background-color:#DCDCDC;
 }
 
+.editor-content h2{
+    color: #4682B4;
+    text-align: center;
+}
+
 .toolbar-content{
     display: flex;
     flex: 1;
@@ -57,6 +62,7 @@
 .toolbar-content button{
     background-color: white;
     border: none;
+    width: 30px;
     height: 30px;
     border-radius: 4px;
     transition: all 0.3s;
@@ -70,4 +76,53 @@
     border: none;
     width: 15px;
     height: 15px;
+}
+
+.toolbar-divisor{
+    display: block;
+    height: 30px;
+    width: 1px;
+    background-color: #DCDCDC;
+}
+
+.editor-modal-glass{
+    display: flex;
+    flex: 1;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0,0,0,.5);
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    z-index: 2000;
+    justify-content: center;
+}
+
+.editor-modal-container{
+    display: block;
+    background: white;
+    margin: 20vh 0 10vh 0;
+    min-width: 80vw;
+    padding: 35px;
+    position: relative;
+    overflow: auto;
+}
+
+.editor-modal-closer{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 5px;
+    position: fixed;
+    top: 10vh;
+    right: 3vw;
+    width: 40px;
+    height: 40px;
+    color: white;
+    font-weight: bolder;
+    transition: all 0.3s;
+}
+
+.editor-modal-closer:hover{
+    background-color: rgba(255,255,255,.5);
 }

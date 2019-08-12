@@ -4,24 +4,45 @@ import {BoldIcon, CenterAlignIcon, ImageIcon, ItalicIcon, JustifyAlignIcon, Left
 
 class Toolbar extends Component {
 
+    //State muda a cor de cada botão para texto da edição já possua aquela propriedade
+    state = {
+        h2: false,
+        h3: false,
+        bold: false,
+        italic: false,
+        underline: false,
+        ol: false,
+        ul: false,
+        link: false
+    }
+
     render(){
         return(
             <div className="toolbar-content">
+                <button onClick={() => this.props.format("undo")}>
+                    <UndoIcon/>
+                </button>
+                <button onClick={() => this.props.format("redo")}>
+                    <RedoIcon/>
+                </button>
+                <div className="toolbar-divisor"/>
                 <button onClick={() => this.props.titles("h2")}>
-                    <TitleIcon/>
+                    <TitleIcon fill={this.state.h2 ? '#4682B4' : null}/>
                 </button>
                 <button onClick={() => this.props.titles("h3")}>
-                    <Title1Icon/>
+                    <Title1Icon fill={this.state.h3 ? '#4682B4' : null}/>
                 </button>
+                <div className="toolbar-divisor"/>
                 <button onClick={() => this.props.format("bold")}>
-                    <BoldIcon/>
+                    <BoldIcon fill={this.state.bold ? '#4682B4' : null}/>
                 </button>
                 <button onClick={() => this.props.format("italic")}>
-                    <ItalicIcon/>
+                    <ItalicIcon fill={this.state.italic ? '#4682B4' : null}/>
                 </button>
                 <button onClick={() => this.props.format("underline")}>
-                    <UnderlineIcon/>
+                    <UnderlineIcon fill={this.state.underline ? '#4682B4' : null}/>
                 </button>
+                <div className="toolbar-divisor"/>
                 <button onClick={() => this.props.format("justifyFull")}>
                     <JustifyAlignIcon/>
                 </button>
@@ -35,34 +56,86 @@ class Toolbar extends Component {
                     <RightAlignIcon/>
                 </button>
                 <button onClick={() => this.props.format("insertOrderedList")}>
-                    <ListOIcon/>
+                    <ListOIcon fill={this.state.ol ? '#4682B4' : null}/>
                 </button>
                 <button onClick={() => this.props.format("insertUnorderedList")}>
-                    <ListIcon/>
+                    <ListIcon fill={this.state.ul ? '#4682B4' : null}/>
                 </button>
-                <button onClick={() => this.props.changeInputField("image")}>
+                <div className="toolbar-divisor"/>
+                <button id="openImageChoices">
                     <ImageIcon/>
                 </button>
-                <button onClick={() => this.props.changeInputField("video")}>
+                <button id="openYt">
                     <YoutubeLogo/>
                 </button>
-                <button onClick={() => this.props.changeInputField("link")}>
+                <button id="openLink">
                     <LinkIcon/>
                 </button>
-                <button onClick={() => this.props.format("unlink")}>
-                    <UnlinkIcon/>
+                <button>
+                    <UnlinkIcon fill={this.state.link ? '#4682B4' : null}/>
                 </button>
-                <button onClick={() => this.props.format("undo")}>
-                    <UndoIcon/>
-                </button>
-                <button onClick={() => this.props.format("redo")}>
-                    <RedoIcon/>
-                </button>
+                
             </div>
         )
     }
 
+    componentDidMount(){
 
+        //Detectando propriedades do texto e mudando state
+
+        //Window getSeletion pega posição selecionada na janela, getRange pegar intervalo
+        /*let range = window.getSelection().getRangeAt(0);
+        let h2 = false;
+        let h3 = false;
+        let bold = false;
+        let italic = false;
+        let underline = false;
+        let ul = false;
+        let ol = false;
+        let link = false;
+        let parentsList = [];
+
+        //Iterando nodes
+        function gettingNodeParents(node){
+            parentsList.push(node);
+            if(node.parentElement)
+                gettingNodeParents(node.parentElement)
+        }
+
+        gettingNodeParents(range.startContainer.parentElement);
+        
+        parentsList.forEach( (element) => {
+            if(element.tagName === "H2")
+                h2 = true;
+            if(element.tagName === "H3")
+                h3 = true;
+            if(element.tagName === "B")
+                bold = true;
+            if(element.tagName === "I")
+                italic = true;
+            if(element.tagName === "U")
+                underline = true;
+            if(element.tagName === "UL")
+                ul = true;
+            if(element.tagName === "OL")
+                ol = true;
+            if(element.tagName === "A")
+                link = true;
+        })
+
+        this.setState({
+            h2: h2,
+            h3: h3,
+            bold: bold,
+            italic: italic,
+            underline: underline,
+            ul: ul,
+            ol: ol,
+            link: link
+        })
+
+        console.log(this.state)*/
+    }
 }
 
 export default Toolbar;

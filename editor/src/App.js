@@ -124,8 +124,6 @@ class App extends React.Component {
       //Retornando área de edição de texto
       return(
         <div className="editor-view">
-          <h1>editor...</h1>
-
           <Editor postImg={this.postImge} post={this.postHtml} goBack={this.changeScreen} defaultText="Digite aqui..."/>
 
         </div>

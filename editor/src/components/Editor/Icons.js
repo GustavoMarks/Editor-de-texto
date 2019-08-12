@@ -144,9 +144,9 @@ export const RightAlignIcon = () =>{
 }
 
 
-export const TitleIcon = () =>{
+export const TitleIcon = (props) =>{
     return(
-        <svg x="0px" y="0px" width="319.634px" height="319.635px" viewBox="0 0 319.634 319.635" enableBackground="new 0 0 230 230">
+        <svg x="0px" y="0px" width="319.634px" height="319.635px" viewBox="0 0 319.634 319.635" enableBackground="new 0 0 230 230" fill={props.fill}>
         <g>
             <g>
                 <path d="M318.765,9.888c-0.063-5.479-4.521-9.888-10-9.888H10.83c-5.523,0-10,4.478-10,10v55c0,5.522,4.477,10,10,10h22.596

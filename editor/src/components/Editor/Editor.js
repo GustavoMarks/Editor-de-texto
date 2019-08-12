@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import Toolbar from './Toolbar';
+import Modal from './Modal';
 import './Editor.css';
 
 class Editor extends Component {
@@ -18,7 +19,6 @@ class Editor extends Component {
             - titles: recebe uma string com tamanho do título a ser aplicado e trata casos de formatação
             - linking: aplica formtação de link com url do state
             - inputs: recebe evento e manibula dados de inputs para o state
-            - changeInputField: recebe uma string que determina qual campo de input deve ser mostrado
             - addVideo: gera iframe de video do youtube com url do state
             - addUrlImage: gera imagem atráves de url do state
             - addUploadImage: gera uma imagem por upload passando blob e chave do state, e callback para pai (backend)
@@ -85,115 +85,6 @@ class Editor extends Component {
         
     }
 
-    //Função para configurar campo de inputs para link, imagem ou vídeo
-    changeInputField = (type) =>{
-        //Caso em que botão de link foi clicado
-        if(type === "link"){
-            //Gerando campo com inputs e salvando no state para renderização
-            let content = (
-                <div>
-                    <label htmlFor="url-input">URL:</label>
-                    <input name="urls" id="url-input" type="text" defaultValue={this.state.urls} onChange={this.inputs} />
-
-                    <button onClick={() => this.linking()}>Salvar</button>
-                    <button onClick={() => this.setState({inputField: null})}>Cancelar</button>
-                </div>
-            );
-
-            this.setState({inputField: content});
-        }
-        
-        else if (type === "video"){
-            //Caso em que botão de video foi clicado
-            //Gerando campo com inputs e salvando no state para renderização
-            let content = (
-                <div>
-                    <label htmlFor="url-input">YouTube URL:</label>
-                    <input name="urls" id="url-input" type="text" onChange={this.inputs} defaultValue={this.state.urls}/>
-
-                    <button onClick={() => this.addVideo()}>Salvar</button>
-                    <button onClick={() => this.setState({inputField: null})}>Cancelar</button>
-                </div>
-            );
-
-            this.setState({inputField: content});
-        }
-        
-        else if (type === "image"){
-            //Caso em que botão de imagem foi clicado
-            //Gerando campo com seleção para imagem por url ou uplad
-            let content = (
-                <div>   
-                    <button onClick={() => this.changeInputField("urlImage")}>Imagem url</button>
-                    <button onClick={() => this.changeInputField("uploadImage")}>Imagem upload</button>
-                    <button onClick={() => this.setState({inputField: null})}>Cancelar</button>
-                </div>
-            );
-
-            this.setState({inputField: content});
-        }
-        
-        else if (type === "urlImage"){
-            //Caso em que subopção de imagem por url foi escolhida
-            //Gerando campo com inputs e salvando no state para renderização
-            let content = (
-                <div>
-                    <label htmlFor="url-input">URL:</label>
-                    <input contenteditable name="urls" id="url-input" type="text" onChange={this.inputs} defaultValue={this.state.urls}/>
-
-                    <label htmlFor="width-input">Lagura:</label>
-                    <input name="imageWidth" id="width-input" type="number" onChange={this.inputs} defaultValue={this.state.imageWidth}/>
-
-                    <label htmlFor="height-input">Altura:</label>
-                    <input name="imageHeight" id="height-input" type="number" onChange={this.inputs} defaultValue={this.state.imageHeight}/>
-
-                    <button onClick={() => this.addUrlImage()}>Salvar</button>
-                    <button onClick={() => this.setState({inputField: null})}>Cancelar</button>
-                </div>
-            );
-
-            this.setState({inputField: content});
-        }
-        
-        else if (type === "uploadImage"){
-            //Caso em que subopção de imagem por upload foi escolhida
-            //Gerando campo com inputs e salvando no state para renderização
-            let content = (
-                <div>
-                    <label htmlFor="upload-input">Escolha um aquivo no computador:</label>
-                    <input id="upload-input" type="file" accept="image/x-png,image/gif,image/jpeg" name="imageFile" onChange={this.inputs}/>
-
-                    <label htmlFor="width-input">Lagura:</label>
-                    <input name="imageWidth" id="width-input" type="number" onChange={this.inputs} defaultValue={this.state.imageWidth}/>
-
-                    <label htmlFor="height-input">Altura:</label>
-                    <input name="imageHeight" id="height-input" type="number" onChange={this.inputs} defaultValue={this.state.imageHeight}/>
-
-                    <button onClick={() => this.addUploadImage()}>Salvar</button>
-                    <button onClick={() => this.setState({inputField: null})}>Cancelar</button>
-                </div>
-            );
-
-            this.setState({inputField: content});
-        }
-
-        else if(type === "html"){
-            //Caso em que post é chamado
-            //Gerando campo com input para título da publicação
-            let content = (
-                <div>
-                    <label htmlFor="title-input">Título:</label>
-                    <input name="title" id="title-input" type="text" onChange={this.inputs} defaultValue={this.state.title}/>
-
-                    <button onClick={() => this.post()}>Salvar</button>
-                    <button onClick={() => this.setState({inputField: null})}>Cancelar</button>
-                </div>
-            );
-
-            this.setState({inputField: content});
-        }
-    }
-
     //Função para adição de vídeo por ifram com link externo
     addVideo = () => {
         if(this.state.urls !== " "){
@@ -249,6 +140,7 @@ class Editor extends Component {
         this.props.post(exitHtml, this.state.title);
     }
 
+    //Passando defaultText para campo de edição após montagem do componente
     componentDidMount(){
         let editor = document.getElementById("editor");
         editor.innerHTML = this.props.defaultText;
@@ -257,34 +149,96 @@ class Editor extends Component {
     render(){
         return(
             <div className="editor-content">
+                <h2>NOVA PUBLICAÇÃO</h2>
 
                 <Toolbar
                     format={this.format}
                     titles={this.titles}
-                    changeInputField={this.changeInputField}
                 />
 
-                {
-                    this.state.inputField
-                }
+                <Modal listenersId={["cancel-url", "openLink"]}>
+                    <div>
+                        <label htmlFor="url-input">URL:</label>
+                        <input name="urls" id="url-input" type="text" defaultValue={this.state.urls} onChange={this.inputs} />
+
+                        <button onClick={() => this.linking()}>Salvar</button>
+                        <button id="cancel-url">Cancelar</button>
+                    </div>
+                </Modal>
+
+                <Modal listenersId={["cancel-urlyt", "openYt"]}>
+                    <div>
+                        <label htmlFor="url-input">YouTube URL:</label>
+                        <input name="urls" id="url-input" type="text" onChange={this.inputs} defaultValue={this.state.urls}/>
+
+                        <button onClick={() => this.addVideo()}>Salvar</button>
+                        <button id="cancel-urlyt">Cancelar</button>
+                    </div>
+                </Modal>
+
+                <Modal listenersId={["cancel-choiceImage", "openImageChoices", "open-imageUrl", "open-imageUpload"]}>
+                    <div>   
+                        <button id="open-imageUrl">Imagem url</button>
+                        <button id="open-imageUpload">Imagem upload</button>
+                        <button id="cancel-choiceImage">Cancelar</button>
+                    </div>
+                </Modal>
+
+                <Modal listenersId={["open-imageUrl", "cancel-imageUrl"]}>
+                    <div>
+                        <label htmlFor="url-input">URL:</label>
+                        <input name="urls" id="url-input" type="text" onChange={this.inputs} defaultValue={this.state.urls}/>
+
+                        <label htmlFor="width-input">Lagura:</label>
+                        <input name="imageWidth" id="width-input" type="number" onChange={this.inputs} defaultValue={this.state.imageWidth}/>
+
+                        <label htmlFor="height-input">Altura:</label>
+                        <input name="imageHeight" id="height-input" type="number" onChange={this.inputs} defaultValue={this.state.imageHeight}/>
+
+                        <button onClick={() => this.addUrlImage()}>Salvar</button>
+                        <button id="cancel-imageUrl">Cancelar</button>
+                    </div>
+                </Modal>
+
+                <Modal listenersId={["open-imageUpload", "cancel-imagemUpload"]}>
+                    <div>
+                        <label htmlFor="upload-input">Escolha um aquivo no computador:</label>
+                        <input id="upload-input" type="file" accept="image/x-png,image/gif,image/jpeg" name="imageFile" onChange={this.inputs}/>
+
+                        <label htmlFor="width-input">Lagura:</label>
+                        <input name="imageWidth" id="width-input" type="number" onChange={this.inputs} defaultValue={this.state.imageWidth}/>
+
+                        <label htmlFor="height-input">Altura:</label>
+                        <input name="imageHeight" id="height-input" type="number" onChange={this.inputs} defaultValue={this.state.imageHeight}/>
+
+                        <button onClick={() => this.addUploadImage()}>Salvar</button>
+                        <button id="cancel-ImageUpload">Cancelar</button>
+                    </div>
+                </Modal>
+
+                <Modal listenersId={["cancel-post", "salve"]}>
+                    <div>
+                        <label htmlFor="title-input">Título:</label>
+                        <input name="title" id="title-input" type="text" onChange={this.inputs} defaultValue={this.state.title}/>
+
+                        <button onClick={() => this.post()}>Salvar</button>
+                        <button id="cancel-post">Cancelar</button>
+                    </div>
+                </Modal>
 
                 <div className="editor-paper" contentEditable="true" designmode="on" id="editor" spellCheck="true"> 
     
                 </div>
 
                 <div className="controls-content">
-                    <button className="editor-button" onClick={() => this.changeInputField("html")}>SALVAR</button>
+                    <button id="salve" className="editor-button">SALVAR</button>
 
                     <button className="editor-button" onClick={() => this.props.goBack(1)}>CANCELAR</button>
                 </div>
 
-                
             </div>
         )
     }
-
-    
-
 }
 
 export default Editor;

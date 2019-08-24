@@ -81,60 +81,67 @@ class Toolbar extends Component {
 
     componentDidMount(){
 
-        //Detectando propriedades do texto e mudando state
+        //Referência para caixa de texto editável
+        let editor = document.getElementById("editor");
 
-        //Window getSeletion pega posição selecionada na janela, getRange pegar intervalo
-        /*let range = window.getSelection().getRangeAt(0);
-        let h2 = false;
-        let h3 = false;
-        let bold = false;
-        let italic = false;
-        let underline = false;
-        let ul = false;
-        let ol = false;
-        let link = false;
-        let parentsList = [];
+        //Função para atualizar cor dos botões através do state
+        let buttonsUpdate = () =>{
+            let range = window.getSelection().getRangeAt(0);
+            let h2 = false;
+            let h3 = false;
+            let bold = false;
+            let italic = false;
+            let underline = false;
+            let ul = false;
+            let ol = false;
+            let link = false;
+            let parentsList = [];
 
-        //Iterando nodes
-        function gettingNodeParents(node){
-            parentsList.push(node);
-            if(node.parentElement)
-                gettingNodeParents(node.parentElement)
+            //Iterando nodes
+            function gettingNodeParents(node){
+                parentsList.push(node);
+                if(node.parentElement)
+                    gettingNodeParents(node.parentElement)
+            }
+
+            gettingNodeParents(range.startContainer.parentElement);
+            
+            parentsList.forEach( (element) => {
+                if(element.tagName === "H2")
+                    h2 = true;
+                if(element.tagName === "H3")
+                    h3 = true;
+                if(element.tagName === "B")
+                    bold = true;
+                if(element.tagName === "I")
+                    italic = true;
+                if(element.tagName === "U")
+                    underline = true;
+                if(element.tagName === "UL")
+                    ul = true;
+                if(element.tagName === "OL")
+                    ol = true;
+                if(element.tagName === "A")
+                    link = true;
+            })
+
+            this.setState({
+                h2: h2,
+                h3: h3,
+                bold: bold,
+                italic: italic,
+                underline: underline,
+                ul: ul,
+                ol: ol,
+                link: link
+            })
         }
 
-        gettingNodeParents(range.startContainer.parentElement);
-        
-        parentsList.forEach( (element) => {
-            if(element.tagName === "H2")
-                h2 = true;
-            if(element.tagName === "H3")
-                h3 = true;
-            if(element.tagName === "B")
-                bold = true;
-            if(element.tagName === "I")
-                italic = true;
-            if(element.tagName === "U")
-                underline = true;
-            if(element.tagName === "UL")
-                ul = true;
-            if(element.tagName === "OL")
-                ol = true;
-            if(element.tagName === "A")
-                link = true;
-        })
-
-        this.setState({
-            h2: h2,
-            h3: h3,
-            bold: bold,
-            italic: italic,
-            underline: underline,
-            ul: ul,
-            ol: ol,
-            link: link
-        })
-
-        console.log(this.state)*/
+        //Atualizando botões quando caixa de texto é clicada ou texto é percorrido
+        editor.onclick = buttonsUpdate;
+        editor.onkeydown = buttonsUpdate;
+        editor.onkeyup = buttonsUpdate;
+        editor.onchange = buttonsUpdate;
     }
 }
 

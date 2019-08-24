@@ -149,7 +149,7 @@ class Editor extends Component {
     render(){
         return(
             <div className="editor-content">
-                <h2>NOVA PUBLICAÇÃO</h2>
+                <h2 className="editor-content-title">NOVA PUBLICAÇÃO</h2>
 
                 <Toolbar
                     format={this.format}

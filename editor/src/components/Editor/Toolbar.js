@@ -71,7 +71,7 @@ class Toolbar extends Component {
                 <button id="openLink">
                     <LinkIcon/>
                 </button>
-                <button>
+                <button onClick={() => this.props.format("unlink")}>
                     <UnlinkIcon fill={this.state.link ? '#4682B4' : null}/>
                 </button>
                 

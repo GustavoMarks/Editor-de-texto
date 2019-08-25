@@ -13,6 +13,7 @@ class Editor extends Component {
             - imageHeight: guarda valores (%) para dimensão de altura de imagem a ser inserida (default 20)
             - imageFile: guarda arquivo de imagem para upload
             - title: guarda valor de titulo para post da publicação (default titulo-{numero randomico})
+            - range: guarda seleção de texto (para ser recuperada em caso de abertura de modal)
 
         Métodos:
             - format: recebe uma string de comando para aplicar formatação via DOM (com função nativa)
@@ -40,6 +41,7 @@ class Editor extends Component {
         imageHeight: 20,
         imageFile: null,
         title: this.props.updatig ? this.props.title : "titulo-" + new Date().getTime(),
+        range: null
     }
 
     //Função para manipular a fomatação html do campo de edição
@@ -68,6 +70,8 @@ class Editor extends Component {
 
     //Função para atribuir hiperlink para texto
     linking = () =>{
+        window.getSelection().removeAllRanges();
+        window.getSelection().addRange(this.state.range);
         document.execCommand('CreateLink', false, this.state.urls);
     }
 
@@ -94,7 +98,7 @@ class Editor extends Component {
             iframe.width = "80%";
             iframe.src= "https://www.youtube.com/embed/"+this.state.urls;
 
-            let range = window.getSelection().getRangeAt(0);
+            let range = this.state.range
             range.insertNode(iframe);
         }
     }
@@ -126,7 +130,7 @@ class Editor extends Component {
             img.style.width = this.state.imageWidth + "%";
             img.style.height = this.state.imageHeight + "%";
 
-            let range = window.getSelection().getRangeAt(0);
+            let range = this.state.range;
             range.insertNode(img);
         }
     }
@@ -140,9 +144,17 @@ class Editor extends Component {
         this.props.post(exitHtml, this.state.title);
     }
 
+    //Função para salvar seleção do campo de edição antes de abertura de modal ou ação semelhante
+    saveRange = () => {
+        this.setState({
+            range: window.getSelection().getRangeAt(0),
+        })
+    }
+
     //Passando defaultText para campo de edição após montagem do componente
     componentDidMount(){
         let editor = document.getElementById("editor");
+        editor.focus();
         editor.innerHTML = this.props.defaultText;
     }
 
@@ -278,7 +290,7 @@ class Editor extends Component {
                     </div>
                 </Modal>
 
-                <div className="editor-paper" contentEditable="true" designmode="on" id="editor" spellCheck="true"> 
+                <div className="editor-paper" contentEditable="true" designmode="on" id="editor" spellCheck="true" onBlur={() => this.saveRange()}> 
     
                 </div>
 

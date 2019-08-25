@@ -12,9 +12,11 @@
 /*Botões*/
 .editor-button{
     height: 40px;
+    min-width: 100px;
+    max-width: 50%;
     border: none;
     border-radius: 10px;
-    margin: 0 0 10px 0;
+    margin: 0 10px 10px 10px;
     background-color: #4682B4;
     color: #F8F8FF;
     font-family: 'Arial Black';
@@ -125,4 +127,41 @@
 
 .editor-modal-closer:hover{
     background-color: rgba(255,255,255,.5);
+}
+
+.editor-modal-children-conteint{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 100%;
+}
+
+.editor-modal-children-conteint-input{
+    min-width: 50%;
+    margin: 0 0 0 4px;
+    height: 30px;
+    border-radius: 10px;
+    border-style: solid;
+}
+
+.editor-modal-numberinput{
+    width: 80px;
+    height: 30px;
+    padding: 4px;
+    margin: 4px;
+    border-radius: 10px;
+    border-style: solid;
+}
+
+.editor-modal-children-conteint button{
+    margin-top: 10px;
+}
+
+.editor-modal-children-subconteint{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin: 10px;
+    align-items: center;
 }

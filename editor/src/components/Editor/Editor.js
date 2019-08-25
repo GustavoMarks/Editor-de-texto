@@ -156,73 +156,125 @@ class Editor extends Component {
                     titles={this.titles}
                 />
 
+                {
+                    //Modal para input de link para hiperlink
+                }
                 <Modal listenersId={["cancel-url", "openLink"]}>
-                    <div>
-                        <label htmlFor="url-input">URL:</label>
-                        <input name="urls" id="url-input" type="text" defaultValue={this.state.urls} onChange={this.inputs} />
-
-                        <button onClick={() => this.linking()}>Salvar</button>
-                        <button id="cancel-url">Cancelar</button>
+                    <div className="editor-modal-children-conteint">
+                        <h3 className="editor-content-title">ADICIONAR HIPERLINK</h3>
+                        <div className="editor-modal-children-subconteint">
+                            <label htmlFor="url-input">URL:</label>
+                            <input className="editor-modal-children-conteint-input" name="urls" id="url-input" type="text" defaultValue={this.state.urls} onChange={this.inputs} />
+                            <button className="editor-button" onClick={() => this.linking()}>Salvar</button>
+                            <button id="cancel-url" className="editor-button">Cancelar</button>
+                        </div>
                     </div>
                 </Modal>
 
+                {
+                    //Modal para input de link para video do youtube
+                }
                 <Modal listenersId={["cancel-urlyt", "openYt"]}>
-                    <div>
-                        <label htmlFor="url-input">YouTube URL:</label>
-                        <input name="urls" id="url-input" type="text" onChange={this.inputs} defaultValue={this.state.urls}/>
+                    <div className="editor-modal-children-conteint">
+                    <h3 className="editor-content-title">ADICIONAR VÍDEO DO YOUTUBE</h3>
+                        <div className="editor-modal-children-subconteint">
+                            <label htmlFor="url-input">YouTube URL:</label>
+                            <input className="editor-modal-children-conteint-input" name="urls" id="url-input" type="text" onChange={this.inputs} defaultValue={this.state.urls}/>
 
-                        <button onClick={() => this.addVideo()}>Salvar</button>
-                        <button id="cancel-urlyt">Cancelar</button>
+                            <button className="editor-button" onClick={() => this.addVideo()}>Salvar</button>
+                            <button className="editor-button" id="cancel-urlyt">Cancelar</button>
+                        </div>
                     </div>
                 </Modal>
 
+                {
+                    //Modal para escolha de tipo de imagem
+                }
                 <Modal listenersId={["cancel-choiceImage", "openImageChoices", "open-imageUrl", "open-imageUpload"]}>
-                    <div>   
-                        <button id="open-imageUrl">Imagem url</button>
-                        <button id="open-imageUpload">Imagem upload</button>
-                        <button id="cancel-choiceImage">Cancelar</button>
+                    <div className="editor-modal-children-conteint">
+                    <h3 className="editor-content-title">SELEECIONE O TIPO DE IMAGEM</h3>
+                        <div className="editor-modal-children-subconteint">
+                           <button id="open-imageUrl" className="editor-button">Imagem url</button>
+                            <button id="open-imageUpload" className="editor-button">Imagem upload</button>
+                            <button id="cancel-choiceImage" className="editor-button">Cancelar</button> 
+                        </div>
+                        
                     </div>
                 </Modal>
+
+                {
+                    //Modal para input de imagem por url
+                }
 
                 <Modal listenersId={["open-imageUrl", "cancel-imageUrl"]}>
-                    <div>
-                        <label htmlFor="url-input">URL:</label>
-                        <input name="urls" id="url-input" type="text" onChange={this.inputs} defaultValue={this.state.urls}/>
+                    <div className="editor-modal-children-conteint">
+                    <h3 className="editor-content-title">ADICIONAR IMAGEM POR URL</h3>
+                        <div className="editor-modal-children-subconteint">
+                            <label htmlFor="url-input">URL:</label>
+                            <input className="editor-modal-children-conteint-input" name="urls" id="url-input" type="text" onChange={this.inputs} defaultValue={this.state.urls}/>
+                        </div>
 
-                        <label htmlFor="width-input">Lagura:</label>
-                        <input name="imageWidth" id="width-input" type="number" onChange={this.inputs} defaultValue={this.state.imageWidth}/>
+                        <div className="editor-modal-children-subconteint">
+                            <div>
+                               <label htmlFor="width-input">Lagura: </label>
+                                <input className="editor-modal-numberinput" name="imageWidth" id="width-input" type="number" onChange={this.inputs} defaultValue={this.state.imageWidth}/> 
+                            </div>
+                            
+                            <div>
+                                <label htmlFor="height-input">Altura: </label>
+                                <input className="editor-modal-numberinput" name="imageHeight" id="height-input" type="number" onChange={this.inputs} defaultValue={this.state.imageHeight}/>
+                            </div>  
+                            
+                        </div>
+                        <div className="editor-modal-children-subconteint">
+                            <button onClick={() => this.addUrlImage()} className="editor-button">Salvar</button>
+                            <button id="cancel-imageUrl" className="editor-button">Cancelar</button>
+                        </div>
+                    </div>
+                    
+                </Modal>
 
-                        <label htmlFor="height-input">Altura:</label>
-                        <input name="imageHeight" id="height-input" type="number" onChange={this.inputs} defaultValue={this.state.imageHeight}/>
+                {
+                    //Modal para input de imagem por upload
+                }
+                <Modal listenersId={["open-imageUpload", "cancel-ImageUpload"]}>
+                    <div className="editor-modal-children-conteint">
+                    <h3 className="editor-content-title">ADICIONAR IMAGEM POR UPLOAD</h3>
+                        <div className="editor-modal-children-subconteint">
+                            <label htmlFor="upload-input">Escolha um aquivo no computador:</label>
+                            <input id="upload-input" type="file" accept="image/x-png,image/gif,image/jpeg" name="imageFile" onChange={this.inputs}/>
+                        </div>
+                        
+                        <div className="editor-modal-children-subconteint">
+                            <label htmlFor="width-input">Lagura:</label>
+                            <input className="editor-modal-numberinput" name="imageWidth" id="width-input" type="number" onChange={this.inputs} defaultValue={this.state.imageWidth}/>
+                            
+                            <label htmlFor="height-input">Altura:</label>
+                            <input className="editor-modal-numberinput" name="imageHeight" id="height-input" type="number" onChange={this.inputs} defaultValue={this.state.imageHeight}/>
+                        </div>
 
-                        <button onClick={() => this.addUrlImage()}>Salvar</button>
-                        <button id="cancel-imageUrl">Cancelar</button>
+                        <div className="editor-modal-children-subconteint">
+                            <button className="editor-button" onClick={() => this.addUploadImage()}>Salvar</button>
+                            <button id="cancel-ImageUpload" className="editor-button">Cancelar</button> 
+                        </div>
                     </div>
                 </Modal>
 
-                <Modal listenersId={["open-imageUpload", "cancel-imagemUpload"]}>
-                    <div>
-                        <label htmlFor="upload-input">Escolha um aquivo no computador:</label>
-                        <input id="upload-input" type="file" accept="image/x-png,image/gif,image/jpeg" name="imageFile" onChange={this.inputs}/>
-
-                        <label htmlFor="width-input">Lagura:</label>
-                        <input name="imageWidth" id="width-input" type="number" onChange={this.inputs} defaultValue={this.state.imageWidth}/>
-
-                        <label htmlFor="height-input">Altura:</label>
-                        <input name="imageHeight" id="height-input" type="number" onChange={this.inputs} defaultValue={this.state.imageHeight}/>
-
-                        <button onClick={() => this.addUploadImage()}>Salvar</button>
-                        <button id="cancel-ImageUpload">Cancelar</button>
-                    </div>
-                </Modal>
+                {
+                    //Modal para salve do texto editado
+                }
 
                 <Modal listenersId={["cancel-post", "salve"]}>
-                    <div>
-                        <label htmlFor="title-input">Título:</label>
-                        <input name="title" id="title-input" type="text" onChange={this.inputs} defaultValue={this.state.title}/>
+                    <div className="editor-modal-children-conteint">
+                    <h3 className="editor-content-title">SALVAR POSTAGEM</h3>
+                        <div className="editor-modal-children-subconteint">
+                            <label htmlFor="title-input">Título:</label>
+                            <input className="editor-modal-children-conteint-input" name="title" id="title-input" type="text" onChange={this.inputs} defaultValue={this.state.title}/>
 
-                        <button onClick={() => this.post()}>Salvar</button>
-                        <button id="cancel-post">Cancelar</button>
+                            <button onClick={() => this.post()} className="editor-button">Salvar</button>
+                            <button id="cancel-post" className="editor-button">Cancelar</button>
+                        </div>
+                        
                     </div>
                 </Modal>
 
@@ -231,7 +283,7 @@ class Editor extends Component {
                 </div>
 
                 <div className="controls-content">
-                    <button id="salve" className="editor-button">SALVAR</button>
+                    <button id="salve" className="editor-button" >SALVAR</button>
 
                     <button className="editor-button" onClick={() => this.props.goBack(1)}>CANCELAR</button>
                 </div>

@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import Toolbar from './Toolbar';
 import Modal from './Modal';
+import PopUp from './PopUp';
 import './Editor.css';
 
 class Editor extends Component {
@@ -299,6 +300,10 @@ class Editor extends Component {
 
                     <button className="editor-button" onClick={() => this.props.goBack(1)}>CANCELAR</button>
                 </div>
+
+                <PopUp visibility>
+                    Teste
+                </PopUp>
 
             </div>
         )

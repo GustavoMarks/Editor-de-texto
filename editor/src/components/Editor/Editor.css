@@ -165,3 +165,25 @@
     margin: 10px;
     align-items: center;
 }
+
+.popup{
+    position: fixed;
+    bottom: 15px;
+    left: 17px;
+    min-width: 20%;
+    padding: 8px;
+    border-style: outset;
+    border-width: 1px;
+    border-radius: 8px;
+    border-color: #4682B4;
+    background-color: white;
+    box-shadow: 1px 1px 1px 1px rgba(0,0,0,.2);
+}
+
+.popup span{
+    float: right;
+}
+
+.popup button{
+    border: none;
+}

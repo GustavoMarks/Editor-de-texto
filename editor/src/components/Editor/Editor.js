@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import Toolbar from './Toolbar';
 import Modal from './Modal';
-import PopUp from './PopUp';
 import './Editor.css';
 
 class Editor extends Component {
@@ -15,6 +14,9 @@ class Editor extends Component {
             - imageFile: guarda arquivo de imagem para upload
             - title: guarda valor de titulo para post da publicação (default titulo-{numero randomico})
             - range: guarda seleção de texto (para ser recuperada em caso de abertura de modal)
+            - popup: guarda bool indicando visibilidade do pop up
+            - popupMessage: guarda mensagem a ser exibida em popup
+            - popupWarning: guarda booleano indicando se pop é um aviso negativo
 
         Métodos:
             - format: recebe uma string de comando para aplicar formatação via DOM (com função nativa)
@@ -26,6 +28,9 @@ class Editor extends Component {
             - addUploadImage: gera uma imagem por upload passando blob e chave do state, e callback para pai (backend)
             - createImage (auxiliar): recebe string com url e gera img no campo de edição
             - post: guarda o valor HTML do campo de edição e enviar para pai (backend)
+            - saveRange: salva selação de texto no state
+            - showPopup: ativa popup e atualiza mensagem
+
 
         props:
             - updating: booleano, quando true, campo de edição recebe dados para update e seta saida para key existente
@@ -42,7 +47,10 @@ class Editor extends Component {
         imageHeight: 20,
         imageFile: null,
         title: this.props.updatig ? this.props.title : "titulo-" + new Date().getTime(),
-        range: null
+        range: null,
+        popup: false,
+        popupMessage: null,
+        popupWarning: false,
     }
 
     //Função para manipular a fomatação html do campo de edição
@@ -90,18 +98,42 @@ class Editor extends Component {
         
     }
 
-    //Função para adição de vídeo por ifram com link externo
+    //Função para adição de vídeo por iframe com link externo
     addVideo = () => {
-        if(this.state.urls !== " "){
-            let iframe = document.createElement("iframe");
-            iframe.type = "text/html";
-            iframe.height = "360";
-            iframe.width = "80%";
-            iframe.src= "https://www.youtube.com/embed/"+this.state.urls;
+        let entry = this.state.urls;
 
-            let range = this.state.range
-            range.insertNode(iframe);
+        if(entry.indexOf("https://www.youtube.com") !== -1){
+            if(entry.indexOf("index=") !== -1 || entry.indexOf("radio=") !== -1){
+                let iframe = document.createElement("iframe");
+                iframe.type = "text/html";
+                iframe.height = "360";
+                iframe.width = "80%";
+                iframe.src= "https://www.youtube.com/embed/"+entry;
+
+                let range = this.state.range;
+                this.showPopup("Playlist do Youtube inserida!", false)
+                range.insertNode(iframe);
+
+            } else if (entry.indexOf("watch?v=") !== -1){
+                let iframe = document.createElement("iframe");
+                iframe.type = "text/html";
+                iframe.height = "360";
+                iframe.width = "80%";
+
+                let id = entry.split("watch?v=")[1];
+                iframe.src= "https://www.youtube.com/embed/"+id;
+
+                let range = this.state.range;
+                this.showPopup("Vídeo do Youtube inserido!", false)
+                range.insertNode(iframe);
+            } else {
+                this.showPopup("Link corrompido...", true);
+            }
+        } else {
+            this.showPopup("Link inválido...", true);
         }
+
+        
     }
 
     //Função para adicionar imagem por url
@@ -116,6 +148,9 @@ class Editor extends Component {
             //Gerando key para o arquivo
             let key = new Date().getTime();
 
+            //Abrindo popup de aviso
+            this.showPopup("Enviando imagem para servidor...", false);
+
             //Enviando imagem, key e callback para gerar imagem
             this.props.postImg(this.state.imageFile, key, this.createImage);
 
@@ -124,7 +159,7 @@ class Editor extends Component {
 
     //Função para criar um elemento img no campo de edição
     createImage = (url) => {
-        console.log("creating image")
+        this.showPopup("Nova imagem adicionada ao texto!", false);
         if(url){
             let img = document.createElement("img");
             img.src = url;
@@ -147,8 +182,18 @@ class Editor extends Component {
 
     //Função para salvar seleção do campo de edição antes de abertura de modal ou ação semelhante
     saveRange = () => {
+        if(window.getSelection().getRangeAt(0))
+            this.setState({
+                range: window.getSelection().getRangeAt(0),
+            })
+    }
+
+    //Função para ativar popup e atualizar mensagem
+    showPopup = (msg, warning) =>{
         this.setState({
-            range: window.getSelection().getRangeAt(0),
+            popup: true,
+            popupMessage: msg,
+            popupWarning: warning
         })
     }
 
@@ -172,13 +217,13 @@ class Editor extends Component {
                 {
                     //Modal para input de link para hiperlink
                 }
-                <Modal listenersId={["cancel-url", "openLink"]}>
+                <Modal listenersId={["cancel-url", "openLink", "submit-hiperlink"]}>
                     <div className="editor-modal-children-conteint">
                         <h3 className="editor-content-title">ADICIONAR HIPERLINK</h3>
                         <div className="editor-modal-children-subconteint">
                             <label htmlFor="url-input">URL:</label>
                             <input className="editor-modal-children-conteint-input" name="urls" id="url-input" type="text" defaultValue={this.state.urls} onChange={this.inputs} />
-                            <button className="editor-button" onClick={() => this.linking()}>Salvar</button>
+                            <button id="submit-hiperlink" className="editor-button" onClick={() => this.linking()}>Salvar</button>
                             <button id="cancel-url" className="editor-button">Cancelar</button>
                         </div>
                     </div>
@@ -187,14 +232,14 @@ class Editor extends Component {
                 {
                     //Modal para input de link para video do youtube
                 }
-                <Modal listenersId={["cancel-urlyt", "openYt"]}>
+                <Modal listenersId={["cancel-urlyt", "openYt", "submit-ytvideo"]}>
                     <div className="editor-modal-children-conteint">
                     <h3 className="editor-content-title">ADICIONAR VÍDEO DO YOUTUBE</h3>
                         <div className="editor-modal-children-subconteint">
                             <label htmlFor="url-input">YouTube URL:</label>
                             <input className="editor-modal-children-conteint-input" name="urls" id="url-input" type="text" onChange={this.inputs} defaultValue={this.state.urls}/>
 
-                            <button className="editor-button" onClick={() => this.addVideo()}>Salvar</button>
+                            <button id="submit-ytvideo" className="editor-button" onClick={() => this.addVideo()}>Salvar</button>
                             <button className="editor-button" id="cancel-urlyt">Cancelar</button>
                         </div>
                     </div>
@@ -219,7 +264,7 @@ class Editor extends Component {
                     //Modal para input de imagem por url
                 }
 
-                <Modal listenersId={["open-imageUrl", "cancel-imageUrl"]}>
+                <Modal listenersId={["open-imageUrl", "cancel-imageUrl", "submit-imgurl"]}>
                     <div className="editor-modal-children-conteint">
                     <h3 className="editor-content-title">ADICIONAR IMAGEM POR URL</h3>
                         <div className="editor-modal-children-subconteint">
@@ -240,7 +285,7 @@ class Editor extends Component {
                             
                         </div>
                         <div className="editor-modal-children-subconteint">
-                            <button onClick={() => this.addUrlImage()} className="editor-button">Salvar</button>
+                            <button id="submit-imgurl" onClick={() => this.addUrlImage()} className="editor-button">Salvar</button>
                             <button id="cancel-imageUrl" className="editor-button">Cancelar</button>
                         </div>
                     </div>
@@ -250,7 +295,7 @@ class Editor extends Component {
                 {
                     //Modal para input de imagem por upload
                 }
-                <Modal listenersId={["open-imageUpload", "cancel-ImageUpload"]}>
+                <Modal listenersId={["open-imageUpload", "cancel-ImageUpload", "submit-imgupload"]}>
                     <div className="editor-modal-children-conteint">
                     <h3 className="editor-content-title">ADICIONAR IMAGEM POR UPLOAD</h3>
                         <div className="editor-modal-children-subconteint">
@@ -267,7 +312,7 @@ class Editor extends Component {
                         </div>
 
                         <div className="editor-modal-children-subconteint">
-                            <button className="editor-button" onClick={() => this.addUploadImage()}>Salvar</button>
+                            <button id="submit-imgupload" className="editor-button" onClick={() => this.addUploadImage()}>Salvar</button>
                             <button id="cancel-ImageUpload" className="editor-button">Cancelar</button> 
                         </div>
                     </div>
@@ -277,14 +322,14 @@ class Editor extends Component {
                     //Modal para salve do texto editado
                 }
 
-                <Modal listenersId={["cancel-post", "salve"]}>
+                <Modal listenersId={["cancel-post", "salve", "save-submit"]}>
                     <div className="editor-modal-children-conteint">
                     <h3 className="editor-content-title">SALVAR POSTAGEM</h3>
                         <div className="editor-modal-children-subconteint">
                             <label htmlFor="title-input">Título:</label>
                             <input className="editor-modal-children-conteint-input" name="title" id="title-input" type="text" onChange={this.inputs} defaultValue={this.state.title}/>
 
-                            <button onClick={() => this.post()} className="editor-button">Salvar</button>
+                            <button id="save-submit" onClick={() => this.post()} className="editor-button">Salvar</button>
                             <button id="cancel-post" className="editor-button">Cancelar</button>
                         </div>
                         
@@ -301,9 +346,20 @@ class Editor extends Component {
                     <button className="editor-button" onClick={() => this.props.goBack(1)}>CANCELAR</button>
                 </div>
 
-                <PopUp visibility>
-                    Teste
-                </PopUp>
+                {
+                    //Div para popup
+                }
+
+                <div className={this.state.popupWarning ? "popup-warning" : "popup"} style={this.state.popup ? {display: "block"} : {display: "none"}}>
+
+                    {this.state.popupMessage}
+
+                    <span>
+                        <button onClick={() => this.setState({popup: false})}>
+                            x
+                        </button>
+                    </span>
+                </div>
 
             </div>
         )

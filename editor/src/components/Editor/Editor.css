@@ -187,3 +187,25 @@
 .popup button{
     border: none;
 }
+
+.popup-warning{
+    position: fixed;
+    bottom: 15px;
+    left: 17px;
+    min-width: 20%;
+    padding: 8px;
+    border-style: outset;
+    border-width: 1px;
+    border-radius: 8px;
+    border-color: red;
+    background-color: white;
+    box-shadow: 1px 1px 1px 1px rgba(0,0,0,.2);
+}
+
+.popup-warning span{
+    float: right;
+}
+
+.popup-warning button{
+    border: none;
+}

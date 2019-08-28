@@ -14,6 +14,9 @@ class Editor extends Component {
             - imageFile: guarda arquivo de imagem para upload
             - postId: guarda id aleatório da nova postagem (também é usado na referência de imagens por upload)
             - title: guarda valor de titulo para post da publicação (default titulo-{numero randomico})
+            - date: guarda string para data da postagem da publicação
+            - cover: guarda referência para imagem da capa da postagem.
+            - description: guarda string com descrição da postagem para pré-exibição
             - range: guarda seleção de texto (para ser recuperada em caso de abertura de modal)
             - popup: guarda bool indicando visibilidade do pop up
             - popupMessage: guarda mensagem a ser exibida em popup
@@ -52,11 +55,14 @@ class Editor extends Component {
         imageFile: null,
         postId: new Date().getTime(),
         title: this.props.updatig ? this.props.title : "titulo-" + new Date().getTime(),
+        date: "28 de Agosto de 2019",
+        cover: null,
+        description: " ",
         range: null,
         popup: false,
         popupMessage: null,
         popupWarning: false,
-        hasImage: false,
+        hasImage: this.props.hasImage,
         tempImageRefs: [],
     }
 
@@ -198,11 +204,37 @@ class Editor extends Component {
 
     //Função para publicação do texto no campo de edição
     post = () => {
-        //Salvando HTML de saida
-        let exitHtml = document.getElementById("editor").innerHTML;
 
-        //Enviando para servidor por props
-        this.props.post(exitHtml, this.state.title);
+        //Verificando se todos os campos de dados do post foram preenchidos
+        if(this.state.title && this.state.cover && this.state.date && this.state.description){
+            //Salvando HTML de saida
+            let exitHtml = document.getElementById("editor").innerHTML;
+
+            //criando estrutura de post e callback a que recerá url da imagem da capa
+            let callback = (coverUrl) => {
+                let post = {
+                    id: this.state.postId,
+                    titulo: this.state.title,
+                    data: this.state.date,
+                    capa: coverUrl,
+                    desc: this.state.description,
+                    texto: exitHtml,
+                    temImagem: this.state.hasImage,
+                }
+
+                //Enviando para servidor por props
+                this.props.post(post);
+            }
+            
+            //guardando imagem da capa no banco de dados
+            this.props.postImg(this.state.cover, this.state.postId, "capa-"+this.state.postId, callback);
+
+
+            
+        } else{
+            this.showPopup("Preencha todos os campos para completar a postagem!", true);
+        }
+        
     }
 
     //Função para salvar seleção do campo de edição antes de abertura de modal ou ação semelhante
@@ -365,10 +397,29 @@ class Editor extends Component {
                         <div className="editor-modal-children-subconteint">
                             <label htmlFor="title-input">Título:</label>
                             <input className="editor-modal-children-conteint-input" name="title" id="title-input" type="text" onChange={this.inputs} defaultValue={this.state.title}/>
-
-                            <button id="save-submit" onClick={() => this.post()} className="editor-button">Salvar</button>
-                            <button id="cancel-post">Cancelar</button>
                         </div>
+
+                        <div className="editor-modal-children-subconteint">
+                            <label htmlFor="title-input">Data:</label>
+                            <input className="editor-modal-children-conteint-input" name="date" id="title-input" type="text" onChange={this.inputs} defaultValue={this.state.date}/>
+                        </div>
+
+                        <div className="editor-modal-children-subconteint">
+                            <label htmlFor="title-input">Descrição:</label>
+                            <textarea className="editor-modal-children-conteint-input" name="description" id="title-input" type="text" onChange={this.inputs} defaultValue={this.state.description} placeholder="Escreva aqui a descrição da sua postagem..."/>
+                        </div>
+
+                        <div className="editor-modal-children-subconteint">
+                            <label htmlFor="upload-input">Imagem para a capa:</label>
+                            <input id="upload-input" type="file" accept="image/x-png,image/gif,image/jpeg" name="cover" onChange={this.inputs}/>
+                        </div>
+
+
+                        <div className="editor-modal-children-subconteint">
+                            <button id="save-submit" onClick={() => this.post()} className="editor-button">Salvar</button>
+                            <button id="cancel-post" className="editor-button">Cancelar</button>
+                        </div>
+                        
                         
                     </div>
                 </Modal>

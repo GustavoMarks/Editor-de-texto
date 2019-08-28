@@ -64,12 +64,8 @@ class App extends React.Component {
   }
 
   //Função de saída do texto html (usando firebase para testes)
-  postHtml = (html, title) => {
-    firebase.database().ref("posts/"+title).set({
-      title: title,
-      text: html,
-    },
-
+  postHtml = (post) => {
+    firebase.database().ref("posts/"+post.id).set(post,
     (error) =>{
       if(error){
         console.log(error)

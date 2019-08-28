@@ -28,11 +28,11 @@ class App extends React.Component {
   }
 
   //Função para post de imagem (com firebase para testes)
-  postImge = (img, key, callBack) => {
+  postImge = (img, postId, key, callBack1) => {
     console.log("init upload file...")
 
     //Postando arquivo
-    firebase.storage().ref("imgs/"+key).put(img).on('state_changed',
+    firebase.storage().ref("imgs/"+postId+"/"+key).put(img).on('state_changed',
         (snapshot) => {
 
           //Porcentagem de carregamento do arquivo para o servidor
@@ -51,9 +51,9 @@ class App extends React.Component {
 
           //Buscando referência da imagem no servidor firebase
           console.log("init call...");
-          firebase.storage().ref("imgs/"+key).getDownloadURL().then((url) => {
+          firebase.storage().ref("imgs/"+postId+"/"+key).getDownloadURL().then((url) => {
             //Caso de sucesso, passando url para callBack que cria elemento img no editor
-            callBack(url);
+            callBack1(url);
 
           }).catch((error) => {
             //Caso de erro para obter referência
@@ -95,6 +95,29 @@ class App extends React.Component {
     })
   }
 
+  //Função para deleção de imagens no servidor
+  removeImage = (postId, imgKeys, callBack) =>{
+    callBack("Removendo imagens do servidor...", false);
+
+    let count = 0;
+    //Percorrendo lista com chaves de imagens a serem deletadas
+    imgKeys.forEach(key => {
+      count++;
+      firebase.storage().ref("imgs/"+postId+"/"+key).delete().then(() => {
+        callBack("imagens removidas com sucesso: " +count, false);
+        console.log("concluido")
+        if(count === imgKeys.length)
+          this.changeScreen(1)
+      }).catch((e) =>{
+        console.log(e)
+        callBack("Erro inesperdo!", true);
+      });
+    });
+    
+    
+
+  }
+
   render() {
 
     if(this.state.screen === 1){
@@ -124,7 +147,12 @@ class App extends React.Component {
       //Retornando área de edição de texto
       return(
         <div className="editor-view">
-          <Editor postImg={this.postImge} post={this.postHtml} goBack={this.changeScreen} defaultText="Digite aqui..."/>
+          <Editor 
+            postImg={this.postImge} 
+            post={this.postHtml} 
+            goBack={this.changeScreen} 
+            defaultText=" "
+            deleteImg={this.removeImage}/>
 
         </div>
       )
@@ -150,6 +178,7 @@ class App extends React.Component {
             updatig
             title={this.state.post.title}
             postImg={this.postImge}
+            deleteImg={this.removeImage}
             post={this.postHtml}
             defaultText={this.state.post.text}
           />

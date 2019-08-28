@@ -12,11 +12,14 @@ class Editor extends Component {
             - imageWidth: guarda valores (%) para dimensão de largura de imagem a ser inserida (default 20)
             - imageHeight: guarda valores (%) para dimensão de altura de imagem a ser inserida (default 20)
             - imageFile: guarda arquivo de imagem para upload
+            - postId: guarda id aleatório da nova postagem (também é usado na referência de imagens por upload)
             - title: guarda valor de titulo para post da publicação (default titulo-{numero randomico})
             - range: guarda seleção de texto (para ser recuperada em caso de abertura de modal)
             - popup: guarda bool indicando visibilidade do pop up
             - popupMessage: guarda mensagem a ser exibida em popup
             - popupWarning: guarda booleano indicando se pop é um aviso negativo
+            - hasImage: booleano para indicar se postagem tem referência de upload de imagem
+            - tempImgRefs: guarda lista temporário com referências de imagens adicionadas por upload
 
         Métodos:
             - format: recebe uma string de comando para aplicar formatação via DOM (com função nativa)
@@ -30,6 +33,7 @@ class Editor extends Component {
             - post: guarda o valor HTML do campo de edição e enviar para pai (backend)
             - saveRange: salva selação de texto no state
             - showPopup: ativa popup e atualiza mensagem
+            - addNewUploadRef: adiciona ref a uma lista temporária de referências do servidor, para excluir imagens em caso de cancelamento da postagem
 
 
         props:
@@ -46,11 +50,14 @@ class Editor extends Component {
         imageWidth: 20,
         imageHeight: 20,
         imageFile: null,
+        postId: new Date().getTime(),
         title: this.props.updatig ? this.props.title : "titulo-" + new Date().getTime(),
         range: null,
         popup: false,
         popupMessage: null,
         popupWarning: false,
+        hasImage: false,
+        tempImageRefs: [],
     }
 
     //Função para manipular a fomatação html do campo de edição
@@ -145,17 +152,35 @@ class Editor extends Component {
     addUploadImage = () => {
         //Recebendo aquivo do input
         if(this.state.imageFile){
-            //Gerando key para o arquivo
-            let key = new Date().getTime();
 
             //Abrindo popup de aviso
             this.showPopup("Enviando imagem para servidor...", false);
 
-            //Enviando imagem, key e callback para gerar imagem
-            this.props.postImg(this.state.imageFile, key, this.createImage);
+            //Gerando nova chave para imagem no servidor
+            let newKey = new Date().getTime();
 
+            //Enviando imagem, key e callbacks para gerar imagem
+            this.props.postImg(this.state.imageFile, this.state.postId, newKey, this.createImage);
+
+            //Sinalizano que postagem tem uma referência a ser tratada no servidor
+            this.setState({hasImage: true});
+
+            //Guardando referência da imagem na lista de referências temporária
+            this.addNewUploadRef(newKey);
+
+        } else {
+            this.showPopup("Selecione um arquivo!", true)
         }
     }
+
+    //Função para adicionar uma nova referência temporária a lista do state
+    addNewUploadRef = (key) =>{
+        let list = this.state.tempImageRefs;
+        list.push(key);
+        this.setState({
+            tempImageRefs: list
+        })
+    } 
 
     //Função para criar um elemento img no campo de edição
     createImage = (url) => {
@@ -195,6 +220,15 @@ class Editor extends Component {
             popupMessage: msg,
             popupWarning: warning
         })
+    }
+
+    //Função de cancelamento do post, verifica se há imagens na lista de referências temporária e volta a tela anterior
+    cancelPost = () =>{
+        if(this.state.tempImageRefs.length > 0){
+            this.props.deleteImg(this.state.postId, this.state.tempImageRefs, this.showPopup);
+        } else {
+            this.props.goBack(1)
+        }
     }
 
     //Passando defaultText para campo de edição após montagem do componente
@@ -315,6 +349,9 @@ class Editor extends Component {
                             <button id="submit-imgupload" className="editor-button" onClick={() => this.addUploadImage()}>Salvar</button>
                             <button id="cancel-ImageUpload" className="editor-button">Cancelar</button> 
                         </div>
+                        <small className="editor-modal-children-subconteint" style={{textAlign: "center"}}>
+                            <strong>Aviso:</strong> Esta opção fará upload da imagem no seu servidor. A referência da imagem será deletada caso esta postagem seja cancelada ou posteriormente excluída. Remover a imagem do texto não desviculará a imagem desta postagem.
+                        </small>
                     </div>
                 </Modal>
 
@@ -330,7 +367,7 @@ class Editor extends Component {
                             <input className="editor-modal-children-conteint-input" name="title" id="title-input" type="text" onChange={this.inputs} defaultValue={this.state.title}/>
 
                             <button id="save-submit" onClick={() => this.post()} className="editor-button">Salvar</button>
-                            <button id="cancel-post" className="editor-button">Cancelar</button>
+                            <button id="cancel-post">Cancelar</button>
                         </div>
                         
                     </div>
@@ -343,7 +380,7 @@ class Editor extends Component {
                 <div className="controls-content">
                     <button id="salve" className="editor-button" >SALVAR</button>
 
-                    <button className="editor-button" onClick={() => this.props.goBack(1)}>CANCELAR</button>
+                    <button className="editor-button" onClick={() => this.cancelPost()}>CANCELAR</button>
                 </div>
 
                 {

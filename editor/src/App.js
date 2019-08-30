@@ -64,15 +64,19 @@ class App extends React.Component {
   }
 
   //Função de saída do texto html (usando firebase para testes)
-  postHtml = (post) => {
+  postHtml = (post, callBack) => {
     firebase.database().ref("posts/"+post.id).set(post,
     (error) =>{
       if(error){
         console.log(error)
         console.log("Post fail...");
+        callBack("Erro inesperado!", true);
       } else {
-        console.log("Successfully saved!")
+        console.log("Successfully saved!");
+        callBack("Postagem salva!", false);
       }
+    }).then(() =>{
+      this.changeScreen(1);
     })
   }
 
@@ -86,8 +90,16 @@ class App extends React.Component {
 
   //Função de deleção de postagem
   removeHtml = (key) => {
+    //Removendo postagem
     firebase.database().ref("posts/"+key).remove().then(() => {
       console.log("Post removed!");
+    })
+
+    //Removendo imagens associadas
+    firebase.storage().ref("imgs/"+key+"/").delete().then(() => {
+      console.log("concluido")
+    }).catch((e) => {
+      console.log(e);
     })
   }
 
@@ -132,10 +144,14 @@ class App extends React.Component {
     } else if (this.state.screen === 2){
       //Retornarndo tela com lista de postagens do servidor
       return(
-        <div>
-          <PostsList renderPost={this.renderPost} removeData={this.removeHtml} update={this.updateHtml}/>
-          <button onClick={() => this.changeScreen(1)}>
-            voltar
+        <div className="content">
+          <h1>LISTA DE POSTAGENS</h1>
+          <PostsList 
+            renderPost={this.renderPost}
+            removeData={this.removeHtml} 
+            update={this.updateHtml}/>
+          <button className="content-button" onClick={() => this.changeScreen(1)}>
+            VOLTAR
           </button>
         </div>
       )
@@ -148,17 +164,18 @@ class App extends React.Component {
             post={this.postHtml} 
             goBack={this.changeScreen} 
             defaultText=" "
-            deleteImg={this.removeImage}/>
+            deleteImg={this.removeImage}
+          />
 
         </div>
       )
     } else if (this.state.screen === 4){
       //Retorando área de visualização de postagem
       return(
-        <div>
+        <div style={{margin: "20px"}}>
           <Post data={this.state.post}/>
-          <button onClick={() => this.changeScreen(1)}>
-            voltar
+          <button className="content-button" onClick={() => this.changeScreen(1)}>
+            VOLTAR
           </button>
 
         </div>
@@ -168,20 +185,16 @@ class App extends React.Component {
       return(
         <div>
           
-          <h1>Atualizando {this.state.post.title}</h1>
+          <h1>Atualizando {this.state.post.titulo}</h1>
 
           <Editor
-            updatig
-            title={this.state.post.title}
+            updatig={this.state.post}
             postImg={this.postImge}
             deleteImg={this.removeImage}
             post={this.postHtml}
-            defaultText={this.state.post.text}
+            defaultText={this.state.post.texto}
+            goBack={this.changeScreen}
           />
-          
-          <button onClick={() => this.changeScreen(1)}>
-            voltar
-          </button>
 
         </div>
       )

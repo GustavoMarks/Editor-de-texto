@@ -29,23 +29,29 @@ class PostsList extends Component{
 
     render(){
         return(
-            <ul>
+            <div>
                 {
                     this.state.list.length > 0 ?
 
                     this.state.list.map((post) => {
                         return(
-                        <li key={post.title}>
-                            {post.title} /
-                            <button onClick={() => this.props.renderPost(post)}>ver</button>
-                            <button onClick={() => this.props.update(post)}>editar</button>
-                            <button onClick={() => this.props.removeData(post.title)}>excluir</button> 
-                        </li>)
+                        <div className="postsLists" key={post.id}>
+                            <h2>{post.titulo}</h2>
+                            <img src={post.capa} alt={post.titulo}/>
+                            <span>{post.data}</span>
+                            <p>{post.desc}</p>
+                            <div>
+                                <button onClick={() => this.props.renderPost(post)}>ver</button>
+                                <button onClick={() => this.props.update(post)}>editar</button>
+                                <button onClick={() => this.props.removeData(post.id)}>excluir</button>
+                            </div>
+                             
+                        </div>)
                     })
 
                     : "nenhuma postagem no momento..."
                 }
-            </ul>
+            </div>
         )
     }
 }

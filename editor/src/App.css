@@ -29,3 +29,43 @@
   background-color: #DCDCDC;
   height: 92vh;
 }
+
+.postsLists {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin: 15px;
+}
+
+.postsLists h2{
+  text-transform: uppercase;
+  text-align: center;
+}
+
+.postsLists img {
+  width: 80%;
+  max-height: 400px;
+}
+
+.postsLists span {
+  text-align: center;
+  font-style: italic;
+  color: grey;
+}
+
+.postsLists p {
+  text-align: justify;
+}
+
+.postsLists button {
+  height: 40px;
+  min-width: 100px;
+  border: none;
+  border-radius: 10px;
+  margin: 0 10px 10px 10px;
+  background-color: #4682B4;
+  color: #F8F8FF;
+  font-family: 'Arial Black';
+  transition: all 0.3s;
+}

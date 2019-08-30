@@ -3,6 +3,16 @@ import Toolbar from './Toolbar';
 import Modal from './Modal';
 import './Editor.css';
 
+const monthList = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
+
+const pegaDataString = () =>{
+    let d = new Date();
+    let dia = d.getDate();
+    let mes = monthList[d.getMonth()];
+    let ano = d.getFullYear();
+    return dia + " de " + mes + ", " + ano;
+}
+
 class Editor extends Component {
 
     /*
@@ -21,7 +31,6 @@ class Editor extends Component {
             - popup: guarda bool indicando visibilidade do pop up
             - popupMessage: guarda mensagem a ser exibida em popup
             - popupWarning: guarda booleano indicando se pop é um aviso negativo
-            - hasImage: booleano para indicar se postagem tem referência de upload de imagem
             - tempImgRefs: guarda lista temporário com referências de imagens adicionadas por upload
 
         Métodos:
@@ -53,16 +62,15 @@ class Editor extends Component {
         imageWidth: 20,
         imageHeight: 20,
         imageFile: null,
-        postId: new Date().getTime(),
-        title: this.props.updatig ? this.props.title : "titulo-" + new Date().getTime(),
-        date: "28 de Agosto de 2019",
+        postId: this.props.updatig ? this.props.updatig.id : new Date().getTime(),
+        title: this.props.updatig ? this.props.updatig.titulo : "titulo-" + new Date().getTime(),
+        date: this.props.updatig ? this.props.updatig.data : pegaDataString(),
         cover: null,
-        description: " ",
+        description: this.props.updatig ? this.props.updatig.desc : " ",
         range: null,
         popup: false,
         popupMessage: null,
         popupWarning: false,
-        hasImage: this.props.hasImage,
         tempImageRefs: [],
     }
 
@@ -168,9 +176,6 @@ class Editor extends Component {
             //Enviando imagem, key e callbacks para gerar imagem
             this.props.postImg(this.state.imageFile, this.state.postId, newKey, this.createImage);
 
-            //Sinalizano que postagem tem uma referência a ser tratada no servidor
-            this.setState({hasImage: true});
-
             //Guardando referência da imagem na lista de referências temporária
             this.addNewUploadRef(newKey);
 
@@ -210,6 +215,8 @@ class Editor extends Component {
             //Salvando HTML de saida
             let exitHtml = document.getElementById("editor").innerHTML;
 
+            this.showPopup("Enviando capa para servidor...", false);
+
             //criando estrutura de post e callback a que recerá url da imagem da capa
             let callback = (coverUrl) => {
                 let post = {
@@ -219,11 +226,13 @@ class Editor extends Component {
                     capa: coverUrl,
                     desc: this.state.description,
                     texto: exitHtml,
-                    temImagem: this.state.hasImage,
                 }
 
+                this.showPopup("Enviando postagem para o servidor...", false);
+
                 //Enviando para servidor por props
-                this.props.post(post);
+                this.props.post(post, this.showPopup);
+
             }
             
             //guardando imagem da capa no banco de dados
@@ -455,3 +464,4 @@ class Editor extends Component {
 }
 
 export default Editor;
+

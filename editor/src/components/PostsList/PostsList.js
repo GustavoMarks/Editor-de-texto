@@ -11,12 +11,11 @@ class PostsList extends Component{
     //Função para buscar lista de dasdos no servidor
     getData = () => {
 
-        let newList = [];
-
         firebase.database().ref("posts/").on('value', (snapshot) => {
+            let newList = [];
 
             snapshot.forEach((post) =>{
-                newList.push(post.val());
+                newList.unshift(post.val());
             })
 
             this.setState({list: newList});

@@ -81,7 +81,7 @@ class App extends React.Component {
   }
 
   //Função para update de post (usando firebase para testes)
-  updateHtml = (newData) => {
+  callUpdater = (newData) => {
     this.setState({
       post: newData,
       screen: 5
@@ -96,11 +96,14 @@ class App extends React.Component {
     })
 
     //Removendo imagens associadas
-    firebase.storage().ref("imgs/"+key+"/").delete().then(() => {
+    /*firebase.storage().ref("imgs/"+key+"/").delete().then(() => {
       console.log("concluido")
     }).catch((e) => {
       console.log(e);
-    })
+    })*/
+
+    //Firebase não recebe referência para pastas
+
   }
 
   //Função para deleção de imagens no servidor
@@ -121,8 +124,6 @@ class App extends React.Component {
         callBack("Erro inesperdo!", true);
       });
     });
-    
-    
 
   }
 
@@ -149,7 +150,7 @@ class App extends React.Component {
           <PostsList 
             renderPost={this.renderPost}
             removeData={this.removeHtml} 
-            update={this.updateHtml}/>
+            update={this.callUpdater}/>
           <button className="content-button" onClick={() => this.changeScreen(1)}>
             VOLTAR
           </button>
@@ -189,6 +190,7 @@ class App extends React.Component {
 
           <Editor
             updatig={this.state.post}
+            update={this.postHtml}
             postImg={this.postImge}
             deleteImg={this.removeImage}
             post={this.postHtml}

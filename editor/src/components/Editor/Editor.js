@@ -211,7 +211,7 @@ class Editor extends Component {
     post = () => {
 
         //Verificando se todos os campos de dados do post foram preenchidos
-        if(this.state.title && this.state.cover && this.state.date && this.state.description){
+        if(this.state.title && this.state.date && this.state.description && ((this.state.cover === null && this.props.updatig) || (this.state.cover))){
             //Salvando HTML de saida
             let exitHtml = document.getElementById("editor").innerHTML;
 
@@ -230,15 +230,23 @@ class Editor extends Component {
 
                 this.showPopup("Enviando postagem para o servidor...", false);
 
-                //Enviando para servidor por props
-                this.props.post(post, this.showPopup);
-
+                //Enviando para servidor por props e verificando se há update ou post
+                if(this.props.updatig){
+                    this.props.update(post, this.showPopup);    
+                } else {
+                    this.props.post(post, this.showPopup);
+                }
+                
             }
             
             //guardando imagem da capa no banco de dados
-            this.props.postImg(this.state.cover, this.state.postId, "capa-"+this.state.postId, callback);
-
-
+            if(this.state.cover){
+                this.props.postImg(this.state.cover, this.state.postId, "capa-"+this.state.postId, callback);
+            } else {
+                //Caso de update onde já uma url para a capa, e novo arquivo n foi selecionado
+                callback(this.props.updatig.capa);
+            }
+            
             
         } else{
             this.showPopup("Preencha todos os campos para completar a postagem!", true);

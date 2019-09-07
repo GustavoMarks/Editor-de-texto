@@ -16,9 +16,61 @@ class Toolbar extends Component {
         link: false
     }
 
+    buttonsUpdate = () =>{
+        let range = window.getSelection().getRangeAt(0);
+        let h2 = false;
+        let h3 = false;
+        let bold = false;
+        let italic = false;
+        let underline = false;
+        let ul = false;
+        let ol = false;
+        let link = false;
+        let parentsList = [];
+
+        //Iterando nodes
+        function gettingNodeParents(node){
+            parentsList.push(node);
+            if(node.parentElement)
+                gettingNodeParents(node.parentElement)
+        }
+
+        gettingNodeParents(range.startContainer.parentElement);
+        
+        parentsList.forEach( (element) => {
+            if(element.tagName === "H2")
+                h2 = true;
+            if(element.tagName === "H3")
+                h3 = true;
+            if(element.tagName === "B")
+                bold = true;
+            if(element.tagName === "I")
+                italic = true;
+            if(element.tagName === "U")
+                underline = true;
+            if(element.tagName === "UL")
+                ul = true;
+            if(element.tagName === "OL")
+                ol = true;
+            if(element.tagName === "A")
+                link = true;
+        })
+
+        this.setState({
+            h2: h2,
+            h3: h3,
+            bold: bold,
+            italic: italic,
+            underline: underline,
+            ul: ul,
+            ol: ol,
+            link: link
+        })
+    }
+
     render(){
         return(
-            <div className="toolbar-content">
+            <div className="toolbar-content" onClick={() => this.buttonsUpdate()}>
                 <button onClick={() => this.props.format("undo")}>
                     <UndoIcon/>
                 </button>
@@ -84,64 +136,11 @@ class Toolbar extends Component {
         //Referência para caixa de texto editável
         let editor = document.getElementById("editor");
 
-        //Função para atualizar cor dos botões através do state
-        let buttonsUpdate = () =>{
-            let range = window.getSelection().getRangeAt(0);
-            let h2 = false;
-            let h3 = false;
-            let bold = false;
-            let italic = false;
-            let underline = false;
-            let ul = false;
-            let ol = false;
-            let link = false;
-            let parentsList = [];
-
-            //Iterando nodes
-            function gettingNodeParents(node){
-                parentsList.push(node);
-                if(node.parentElement)
-                    gettingNodeParents(node.parentElement)
-            }
-
-            gettingNodeParents(range.startContainer.parentElement);
-            
-            parentsList.forEach( (element) => {
-                if(element.tagName === "H2")
-                    h2 = true;
-                if(element.tagName === "H3")
-                    h3 = true;
-                if(element.tagName === "B")
-                    bold = true;
-                if(element.tagName === "I")
-                    italic = true;
-                if(element.tagName === "U")
-                    underline = true;
-                if(element.tagName === "UL")
-                    ul = true;
-                if(element.tagName === "OL")
-                    ol = true;
-                if(element.tagName === "A")
-                    link = true;
-            })
-
-            this.setState({
-                h2: h2,
-                h3: h3,
-                bold: bold,
-                italic: italic,
-                underline: underline,
-                ul: ul,
-                ol: ol,
-                link: link
-            })
-        }
-
         //Atualizando botões quando caixa de texto é clicada ou texto é percorrido
-        editor.onclick = buttonsUpdate;
-        editor.onkeydown = buttonsUpdate;
-        editor.onkeyup = buttonsUpdate;
-        editor.onchange = buttonsUpdate;
+        editor.onclick = this.buttonsUpdate;
+        editor.onkeydown = this.buttonsUpdate;
+        editor.onkeyup = this.buttonsUpdate;
+        editor.onchange = this.buttonsUpdate;
     }
 }
 
